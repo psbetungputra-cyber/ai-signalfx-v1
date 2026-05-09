@@ -54,7 +54,35 @@
             </div>
         </aside>
 
-        <!-- Area Utama: Chart -->
+        <!-- TradingView Widget BEGIN - FULL VERSION -->
+<div class="tradingview-widget-container" style="height:100%;width:100%">
+  <div id="tradingview_pro" style="height:100%;width:100%"></div>
+  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+  <script type="text/javascript">
+  new TradingView.widget(
+  {
+  "autosize": true,
+  "symbol": "OANDA:XAUUSD", // Default saya set ke GOLD (XAU/USD)
+  "interval": "H1",
+  "timezone": "Asia/Jakarta",
+  "theme": "dark",
+  "style": "1",
+  "locale": "id",
+  "toolbar_bg": "#1e293b",
+  "enable_publishing": false,
+  "hide_side_toolbar": false, // Tool gambar (garis, kursor, dll) muncul
+  "allow_symbol_change": true, // Biar kamu bisa ganti pair di webnya langsung
+  "details": true, // Munculkan detail harga di kanan
+  "hotlist": true, // Munculkan daftar harga populer
+  "calendar": true, // Munculkan kalender ekonomi
+  "show_popup_button": true,
+  "popup_width": "1000",
+  "popup_height": "650",
+  "container_id": "tradingview_pro"
+});
+  </script>
+</div>
+<!-- TradingView Widget END -->
         <section class="col-span-12 lg:col-span-9 flex flex-col gap-3">
             <div class="panel-glow rounded-lg overflow-hidden flex-grow relative min-h-[500px]">
                 <!-- Bagian ini nanti kita isi Widget TradingView -->
