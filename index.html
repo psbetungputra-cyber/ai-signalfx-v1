@@ -3,128 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI SIGNALFX PRO</title>
+    <title>AI SIGNALFX LOGIN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #06090f; color: #cbd5e1; overflow: hidden; font-family: sans-serif; }
+        body { background-color: #06090f; color: #cbd5e1; font-family: sans-serif; }
         .panel-glow { border: 1px solid #1e293b; background: #0f172a; }
-        .active-link { border-left: 4px solid #3b82f6; background: #1e293b; color: white; }
         .hidden { display: none; }
     </style>
 </head>
-<body class="h-screen flex flex-col">
+<body class="h-screen flex items-center justify-center p-4">
 
-    <!-- NAVBAR -->
-    <header class="h-[55px] px-4 border-b border-slate-800 bg-[#0f172a] flex justify-between items-center shrink-0">
-        <div class="flex items-center gap-2">
-            <span class="text-blue-500 font-bold">AI SIGNALFX</span>
+    <!-- FORM LOGIN -->
+    <div id="login-screen" class="w-full max-w-sm panel-glow p-8 rounded-xl shadow-2xl">
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold text-blue-500">AI SIGNALFX</h1>
+            <p class="text-xs text-slate-500 mt-2">Masukan akun untuk akses dashboard</p>
         </div>
-        <!-- Tombol Profile (Simulasi) -->
-        <button onclick="showPage('profile')" class="flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
-            <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-[10px]">AD</div>
-            <span class="text-xs hidden md:block">Admin</span>
-        </button>
-    </header>
-
-    <div class="flex flex-grow overflow-hidden">
         
-        <!-- SIDEBAR MENU -->
-        <nav class="w-16 lg:w-60 bg-[#0f172a] border-r border-slate-800 flex flex-col shrink-0">
-            <div class="flex flex-col gap-1 p-2">
-                <button onclick="showPage('dashboard')" class="p-3 text-left hover:bg-slate-800 rounded flex items-center gap-3 active-link" id="btn-dashboard">
-                    <span class="text-xs lg:text-sm">📊 <span class="hidden lg:inline">Dashboard</span></span>
-                </button>
-                <button onclick="showPage('admin')" class="p-3 text-left hover:bg-slate-800 rounded flex items-center gap-3 text-slate-400" id="btn-admin">
-                    <span class="text-xs lg:text-sm">⚙️ <span class="hidden lg:inline">Admin Panel</span></span>
-                </button>
+        <div class="space-y-4">
+            <div>
+                <label class="text-[10px] uppercase font-bold text-slate-500">Username</label>
+                <input type="text" id="username" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-sm mt-1 focus:border-blue-500 outline-none">
             </div>
-            <div class="mt-auto p-4 border-t border-slate-800">
-                <button class="text-red-400 text-xs w-full text-left">🚪 <span class="hidden lg:inline">Logout</span></button>
+            <div>
+                <label class="text-[10px] uppercase font-bold text-slate-500">Password</label>
+                <input type="password" id="password" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-sm mt-1 focus:border-blue-500 outline-none">
             </div>
-        </nav>
+            <p id="error-msg" class="text-red-500 text-[11px] hidden text-center">Username atau Password salah!</p>
+            <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 p-3 rounded-lg text-sm font-bold transition-all text-white mt-4">MASUK</button>
+        </div>
+        
+        <p class="text-[10px] text-center text-slate-600 mt-8">&copy; 2026 AI SIGNALFX - Psbetungputra-Cyber</p>
+    </div>
 
-        <!-- MAIN CONTENT AREA -->
-        <main class="flex-grow relative bg-[#06090f] overflow-y-auto">
-            
-            <!-- PAGE: DASHBOARD -->
-            <div id="page-dashboard" class="h-full flex flex-col">
-                <div class="p-2 border-b border-slate-800 flex gap-2 overflow-x-auto">
-                    <div class="panel-glow p-2 rounded shrink-0 min-w-[120px]">
-                        <p class="text-[9px] text-slate-500 uppercase">SMC Trend</p>
-                        <p class="text-xs font-mono text-blue-400">BOS CONFIRMED</p>
-                    </div>
-                    <div class="panel-glow p-2 rounded shrink-0 min-w-[120px]">
-                        <p class="text-[9px] text-slate-500 uppercase">Signal</p>
-                        <p class="text-xs font-mono text-green-400">BUY XAUUSD</p>
-                    </div>
-                </div>
-                <div class="flex-grow relative bg-black">
-                    <div id="tradingview_pro" class="absolute inset-0"></div>
-                </div>
-            </div>
+    <!-- MAIN DASHBOARD (HIDDEN BY DEFAULT) -->
+    <div id="main-app" class="hidden fixed inset-0 flex flex-col">
+        <!-- Header -->
+        <header class="h-[55px] px-4 border-b border-slate-800 bg-[#0f172a] flex justify-between items-center shrink-0">
+            <span class="text-blue-500 font-bold text-sm">AI SIGNALFX <span class="text-white text-[10px]">V1</span></span>
+            <button onclick="logout()" class="text-[10px] bg-red-900/20 text-red-500 px-3 py-1 rounded border border-red-900/30 font-bold uppercase">Keluar</button>
+        </header>
 
-            <!-- PAGE: ADMIN -->
-            <div id="page-admin" class="hidden p-6">
-                <h2 class="text-xl font-bold mb-4">Admin Control</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div class="panel-glow p-4 rounded-lg">
-                        <h3 class="text-sm font-bold mb-2">Input Sinyal Baru</h3>
-                        <input type="text" placeholder="Pair (ex: XAUUSD)" class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm mb-2">
-                        <select class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm mb-2">
-                            <option>Buy Setup</option>
-                            <option>Sell Setup</option>
-                        </select>
-                        <button class="w-full bg-blue-600 p-2 rounded text-sm font-bold">Broadcast Signal</button>
+        <div class="flex flex-grow overflow-hidden">
+            <!-- Sidebar Nav -->
+            <nav class="w-16 lg:w-56 bg-[#0f172a] border-r border-slate-800 flex flex-col p-2 gap-1">
+                <button onclick="showPage('dashboard')" class="p-3 text-left hover:bg-slate-800 rounded text-xs lg:text-sm font-medium text-white" id="btn-dashboard">📊 <span class="hidden lg:inline ml-2">Dashboard</span></button>
+                <!-- Tombol Admin ini nanti cuma muncul kalau login sebagai admin -->
+                <button id="admin-nav-btn" onclick="showPage('admin')" class="p-3 text-left hover:bg-slate-800 rounded text-xs lg:text-sm font-medium text-slate-400 hidden">⚙️ <span class="hidden lg:inline ml-2">Admin Panel</span></button>
+            </nav>
+
+            <!-- Content Area -->
+            <main class="flex-grow bg-[#06090f] relative overflow-y-auto">
+                <!-- Page: Dashboard -->
+                <div id="page-dashboard" class="h-full flex flex-col">
+                    <div class="p-2 border-b border-slate-800 flex gap-2 overflow-x-auto bg-[#0f172a]">
+                        <div class="panel-glow p-2 rounded shrink-0 min-w-[120px]">
+                            <p class="text-[8px] text-slate-500 uppercase font-bold tracking-tighter">Market Trend</p>
+                            <p class="text-[11px] font-mono text-blue-400">BOS CONFIRMED</p>
+                        </div>
+                        <div class="panel-glow p-2 rounded shrink-0 min-w-[120px]">
+                            <p class="text-[8px] text-slate-500 uppercase font-bold tracking-tighter">AI Confidence</p>
+                            <p class="text-[11px] font-mono text-green-400">92% ACCURACY</p>
+                        </div>
                     </div>
-                    <div class="panel-glow p-4 rounded-lg text-slate-500 italic text-sm">
-                        Fitur manajemen user akan muncul di sini...
+                    <div class="flex-grow relative bg-black">
+                        <div id="tradingview_pro" class="absolute inset-0"></div>
                     </div>
                 </div>
-            </div>
 
-            <!-- PAGE: PROFILE -->
-            <div id="page-profile" class="hidden p-6 text-center">
-                <div class="w-24 h-24 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold">AD</div>
-                <h2 class="text-xl font-bold">Trader Admin</h2>
-                <p class="text-slate-500 text-sm mb-4">Premium Member</p>
-                <div class="max-w-xs mx-auto space-y-2">
-                    <button class="w-full panel-glow p-2 rounded text-sm">Edit Profile</button>
-                    <button class="w-full panel-glow p-2 rounded text-sm border-red-900 text-red-500">Reset Data</button>
+                <!-- Page: Admin -->
+                <div id="page-admin" class="hidden p-6">
+                    <div class="max-w-2xl mx-auto">
+                        <h2 class="text-lg font-bold mb-4 border-b border-slate-800 pb-2 text-white italic">ADMIN CONTROL PANEL</h2>
+                        <div class="grid grid-cols-1 gap-4">
+                            <div class="panel-glow p-5 rounded-xl">
+                                <h3 class="text-xs font-bold text-slate-400 mb-4 uppercase">Update Sinyal Market</h3>
+                                <div class="space-y-3">
+                                    <input type="text" placeholder="Entry Price (ex: 2345.50)" class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-sm outline-none focus:border-blue-500">
+                                    <select class="w-full bg-slate-900 border border-slate-700 p-3 rounded-lg text-sm outline-none focus:border-blue-500">
+                                        <option>SELL SETUP</option>
+                                        <option>BUY SETUP</option>
+                                    </select>
+                                    <button class="w-full bg-blue-600 p-3 rounded-lg text-sm font-bold hover:bg-blue-700 shadow-lg shadow-blue-900/20">Kirim Sinyal</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-        </main>
+            </main>
+        </div>
     </div>
 
     <!-- SCRIPTS -->
     <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
     <script>
-        // Navigasi Halaman
-        function showPage(pageId) {
-            ['dashboard', 'admin', 'profile'].forEach(p => {
-                document.getElementById('page-' + p).classList.add('hidden');
-                const btn = document.getElementById('btn-' + p);
-                if(btn) btn.classList.remove('active-link', 'text-white');
-            });
-            document.getElementById('page-' + pageId).classList.remove('hidden');
-            const activeBtn = document.getElementById('btn-' + pageId);
-            if(activeBtn) activeBtn.classList.add('active-link', 'text-white');
+        // SETTING LOGIN (Ganti di sini bro)
+        const ADMIN_USER = "admin";
+        const ADMIN_PASS = "bro123"; // Ganti password-mu di sini
+
+        function handleLogin() {
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('error-msg');
+
+            if (user === ADMIN_USER && pass === ADMIN_PASS) {
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('admin-nav-btn').classList.remove('hidden'); // Munculkan menu admin
+                initChart();
+            } else {
+                errorMsg.classList.remove('hidden');
+            }
         }
 
-        // Widget TradingView
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": "OANDA:XAUUSD",
-            "interval": "H1",
-            "timezone": "Asia/Jakarta",
-            "theme": "dark",
-            "style": "1",
-            "locale": "id",
-            "toolbar_bg": "#0f172a",
-            "hide_side_toolbar": false,
-            "allow_symbol_change": true,
-            "container_id": "tradingview_pro"
-        });
+        function logout() {
+            location.reload(); // Refresh halaman untuk logout aman
+        }
+
+        function showPage(pageId) {
+            ['dashboard', 'admin'].forEach(p => {
+                document.getElementById('page-' + p).classList.add('hidden');
+            });
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+        }
+
+        function initChart() {
+            new TradingView.widget({
+                "autosize": true,
+                "symbol": "OANDA:XAUUSD",
+                "interval": "H1",
+                "timezone": "Asia/Jakarta",
+                "theme": "dark",
+                "style": "1",
+                "locale": "id",
+                "toolbar_bg": "#0f172a",
+                "enable_publishing": false,
+                "hide_side_toolbar": false,
+                "allow_symbol_change": true,
+                "container_id": "tradingview_pro"
+            });
+        }
     </script>
 </body>
 </html>
