@@ -3,238 +3,515 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AI SIGNALFX V2 PRO</title>
+    <title>AiSignalFx Pro v12.0 - SaaS Official</title>
+    
+    <!-- Dependencies -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://s3.tradingview.com/tv.js"></script>
+    
     <style>
-        body { background-color: #06090f; color: #cbd5e1; font-family: 'Inter', sans-serif; overflow: hidden; }
-        .panel-glow { border: 1px solid #1e293b; background: #0f172a; border-radius: 16px; }
-        .glass-nav { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(10px); border-bottom: 1px solid #1e293b; }
-        .active-link { background: #1e293b; color: #3b82f6; border-left: 4px solid #3b82f6; }
-        .hidden { display: none; }
-        ::-webkit-scrollbar { width: 4px; height: 4px; }
-        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        
+        :root { 
+            --bg-dark: #0b0e11; 
+            --sidebar-bg: #161a1e; 
+            --accent-blue: #3b82f6; 
+            --accent-gold: #f59e0b;
+            --border-color: #2b3139; 
+        }
+
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background: var(--bg-dark); 
+            color: #ffffff; 
+            margin: 0; 
+            overflow: hidden; 
+        }
+        
+        /* Sidebar Styling */
+        #sidebar { 
+            background: var(--sidebar-bg); 
+            border-right: 1px solid var(--border-color); 
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 10000; 
+        }
+
+        /* Navigation Styling */
+        .nav-item { 
+            color: #929aa5; 
+            cursor: pointer; 
+            border-radius: 12px; 
+            margin: 4px 12px; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px; 
+            padding: 12px 16px; 
+            transition: 0.3s; 
+        }
+
+        .nav-active { 
+            background: var(--accent-blue) !important; 
+            color: white !important; 
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); 
+        }
+
+        /* Page Layouts */
+        .page { display: none; height: 100vh; overflow-y: auto; padding-bottom: 100px; animation: fadeIn 0.4s ease; }
+        .page.active { display: block; }
+        
+        /* Component Styles */
+        .glass-panel { background: rgba(22, 26, 30, 0.8); backdrop-filter: blur(12px); border: 1px solid var(--border-color); }
+        .vip-card { border: 1px solid rgba(245, 158, 11, 0.3); background: linear-gradient(145deg, #1c1f24, #161a1e); }
+        .vip-status-gold { background: linear-gradient(45deg, #f59e0b, #fbbf24); color: #000; padding: 2px 8px; border-radius: 4px; font-weight: 900; font-size: 8px; }
+        
+        #tv-chart-box { height: 450px; width: 100%; border-radius: 24px; overflow: hidden; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @media (max-width: 1024px) { 
+            #sidebar { position: fixed; left: -100%; height: 100vh; width: 280px; } 
+            #sidebar.open { left: 0 !important; } 
+        }
+
+        /* Scrollbar Custom */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #2b3139; border-radius: 10px; }
+        
+        .hidden { display: none !important; }
     </style>
 </head>
-<body class="h-screen flex flex-col">
-
-    <!-- LAYER 1: HALAMAN LOGIN -->
-    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-[#06090f] p-6">
-        <div class="w-full max-w-md panel-glow p-8 shadow-2xl border-blue-500/20">
-            <div class="text-center mb-10">
-                <div class="inline-block p-4 rounded-2xl bg-blue-600/10 mb-4 border border-blue-500/20">
-                    <span class="text-4xl">💎</span>
-                </div>
-                <h1 class="text-3xl font-black text-white tracking-tighter">AI SIGNALFX <span class="text-blue-500">V2</span></h1>
-                <p class="text-slate-500 text-xs mt-2 font-bold uppercase tracking-widest">Institutional Trading Terminal</p>
-            </div>
+<body class="flex h-screen overflow-hidden text-gray-200"><!-- 1. LOGIN SCREEN (Firebase Auth Ready) -->
+    <div id="login-screen" class="fixed inset-0 z-[99999] flex items-center justify-center bg-[#0b0e11] p-6">
+        <div class="w-full max-w-md glass-panel p-10 rounded-[40px] shadow-2xl border-blue-500/20 text-center">
+            <h1 class="text-3xl font-black text-blue-500 mb-2 italic tracking-tighter uppercase">AiSignalFx <span class="text-white">v12</span></h1>
+            <p class="text-[9px] text-gray-500 uppercase font-black tracking-[0.3em] mb-10">Institutional SaaS Platform</p>
             
             <div class="space-y-4">
-                <input type="text" id="username" placeholder="Username" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl text-sm outline-none focus:border-blue-500 transition-all text-white">
-                <input type="password" id="password" placeholder="Password" class="w-full bg-slate-900 border border-slate-800 p-4 rounded-xl text-sm outline-none focus:border-blue-500 transition-all text-white">
-                <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 p-4 rounded-xl text-sm font-black text-white shadow-lg shadow-blue-600/20 transition-all active:scale-95 uppercase tracking-widest">Akses Terminal</button>
-                <p id="login-error" class="text-red-500 text-[10px] text-center hidden font-bold uppercase tracking-tighter italic">Error: Kredensial Tidak Valid!</p>
-            </div>
-            <div class="mt-8 pt-6 border-t border-slate-800 flex justify-between items-center text-[9px] font-bold text-slate-600">
-                <span>V2.0.4 STABLE</span>
-                <span>SECURED SYSTEM</span>
+                <div class="relative text-left">
+                    <label class="text-[8px] font-black text-gray-500 uppercase ml-4 mb-1 block">Username Access</label>
+                    <input type="text" id="username" placeholder="Enter Username" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs outline-none focus:border-blue-500 text-white">
+                </div>
+                <div class="relative text-left">
+                    <label class="text-[8px] font-black text-gray-500 uppercase ml-4 mb-1 block">Secret Key</label>
+                    <input type="password" id="password" placeholder="Enter Password" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs outline-none focus:border-blue-500 text-white">
+                </div>
+                <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-white transition-all shadow-lg shadow-blue-900/40">Launch Terminal</button>
+                <p id="login-error" class="text-red-500 text-[9px] font-bold uppercase hidden">Access Denied! Check Credentials.</p>
             </div>
         </div>
     </div>
-    <!-- LAYER 2: APLIKASI UTAMA -->
-    <div id="main-app" class="hidden h-full flex flex-col">
-        
-        <!-- HEADER NAVBAR -->
-        <header class="h-[60px] px-6 glass-nav flex justify-between items-center shrink-0">
+
+    <!-- 2. SIDEBAR NAVIGATION -->
+    <aside id="sidebar" class="w-64 flex flex-col shrink-0">
+        <div class="p-6 border-b border-gray-800/50">
             <div class="flex items-center gap-3">
-                <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_#22c55e]"></div>
-                <h1 class="font-black text-xs tracking-widest text-white uppercase">AI SIGNALFX <span class="text-blue-500">Terminal</span></h1>
+                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 p-[2px]">
+                    <div class="w-full h-full rounded-full bg-[#161a1e] flex items-center justify-center">
+                        <i class="fas fa-user-shield text-blue-500"></i>
+                    </div>
+                </div>
+                <div>
+                    <p id="display-name" class="text-[10px] font-black italic text-white uppercase tracking-tighter">TRADER PRO</p>
+                    <div id="status-badge" class="vip-status-gold mt-1 inline-block">FREE MEMBER</div>
+                </div>
             </div>
-            <div class="flex items-center gap-4">
-                <div id="admin-indicator" class="hidden text-[8px] bg-blue-500/10 text-blue-400 px-2 py-1 rounded border border-blue-500/20 font-black uppercase">Root Admin</div>
-                <button onclick="logout()" class="text-[10px] font-black text-slate-500 hover:text-red-500 transition-colors uppercase">Logout</button>
+        </div>
+
+        <nav class="flex-1 mt-4">
+            <div onclick="switchPage('page-dash', this)" class="nav-item nav-active"><i class="fas fa-chart-line"></i><span>Dashboard</span></div>
+            <div onclick="switchPage('page-autoscan', this)" class="nav-item"><i class="fas fa-robot"></i><span>AI Autoscan VIP</span></div>
+            <div onclick="switchPage('page-visual', this)" class="nav-item"><i class="fas fa-eye text-cyan-400"></i><span>Visual AI Analyst</span></div>
+            
+            <div id="admin-nav" class="hidden">
+                <div class="px-7 mt-6 mb-2 text-[9px] font-black text-blue-500 uppercase tracking-widest">Admin Control</div>
+                <div onclick="switchPage('page-admin', this)" class="nav-item bg-blue-600/5 text-blue-400 border border-blue-500/10"><i class="fas fa-tools"></i><span>Master Console</span></div>
             </div>
+
+            <div class="px-7 mt-6 mb-2 text-[9px] font-black text-gray-600 uppercase tracking-[0.2em]">External Access</div>
+            <a href="https://wa.me/6282258464062" target="_blank" class="nav-item hover:text-green-500"><i class="fab fa-whatsapp"></i><span>WhatsApp VIP</span></a>
+            
+            <div onclick="switchPage('page-vip', this)" class="nav-item text-orange-500 mt-4 border border-orange-500/20 mx-3 bg-orange-500/5"><i class="fas fa-crown"></i><span>Upgrade Lifetime</span></div>
+        </nav>
+        
+        <div class="p-4 border-t border-gray-800/50">
+            <button onclick="logout()" class="w-full py-2 text-[9px] font-black text-gray-600 uppercase hover:text-red-500">Log Out</button>
+        </div>
+    </aside>
+
+    <!-- 3. MAIN DASHBOARD CONTENT -->
+    <main class="flex-1 flex flex-col min-w-0 bg-[#0b0e11] relative">
+        <header class="lg:hidden p-4 bg-[#161a1e] border-b border-gray-800 flex justify-between items-center z-50">
+            <button onclick="toggleMenu()" class="text-blue-500"><i class="fas fa-bars-staggered"></i></button>
+            <span class="font-black italic text-blue-500 uppercase italic">AISIGNALFX</span>
+            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-black">PRO</div>
         </header>
 
-        <div class="flex flex-grow overflow-hidden">
-            <!-- SIDEBAR: Responsif (Ikon di HP, Label di Laptop) -->
-            <nav class="w-16 lg:w-64 bg-[#0f172a] border-r border-slate-800 flex flex-col p-3 gap-2 shrink-0">
-                <button onclick="showPage('dashboard')" id="nav-dashboard" class="p-4 lg:p-3 rounded-xl transition-all active-link">
-                    <div class="flex items-center justify-center lg:justify-start gap-4 font-bold uppercase tracking-wider text-xs">
-                        <span>📊</span> <span class="hidden lg:inline">Market Dashboard</span>
+        <!-- DASHBOARD PAGE -->
+        <div id="page-dash" class="page active px-4 lg:px-8 py-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <!-- CHART PANEL -->
+                    <div class="glass-panel rounded-[32px] p-2 shadow-2xl relative overflow-hidden">
+                        <div id="tv-chart-box"></div>
                     </div>
-                </button>
-                <button id="admin-nav-btn" onclick="showPage('admin')" class="hidden p-4 lg:p-3 rounded-xl text-slate-500 hover:bg-slate-800 transition-all font-bold uppercase tracking-wider text-xs">
-                    <div class="flex items-center justify-center lg:justify-start gap-4">
-                        <span>⚙️</span> <span class="hidden lg:inline">Admin Control</span>
-                    </div>
-                </button>
-                <button onclick="showPage('profile')" id="nav-profile" class="p-4 lg:p-3 rounded-xl text-slate-500 hover:bg-slate-800 transition-all font-bold uppercase tracking-wider text-xs">
-                    <div class="flex items-center justify-center lg:justify-start gap-4">
-                        <span>👤</span> <span class="hidden lg:inline">My Profile</span>
-                    </div>
-                </button>
-                <div class="mt-auto p-4 hidden lg:block panel-glow bg-slate-900/50">
-                    <p class="text-[8px] text-slate-500 font-black uppercase mb-1">Status Koneksi</p>
-                    <p class="text-[10px] text-blue-400 font-mono">Connected to Vercel</p>
-                </div>
-            </nav>
-
-            <!-- MAIN CONTENT AREA -->
-            <main class="flex-grow bg-[#06090f] relative overflow-y-auto">
-                <!-- PAGE: DASHBOARD -->
-                <div id="page-dashboard" class="h-full flex flex-col">
-                    <div class="p-3 border-b border-slate-800 flex gap-3 overflow-x-auto no-scrollbar bg-[#06090f]">
-                        <div class="panel-glow p-4 shrink-0 min-w-[160px] border-l-4 border-blue-500 flex flex-col justify-center">
-                            <p class="text-[8px] text-slate-500 font-black uppercase tracking-tighter">Market Structure</p>
-                            <p id="live-structure" class="text-[11px] font-mono text-white mt-1 italic font-bold uppercase">Scanning BOS...</p>
+                    
+                    <!-- LIVE SIGNAL STATS -->
+                    <div class="glass-panel rounded-[32px] p-6 shadow-2xl border-blue-500/10">
+                        <div class="flex justify-between items-center mb-6">
+                            <div class="flex items-center gap-3">
+                                <div id="tf-badge" class="bg-blue-600/20 text-blue-500 text-[10px] font-black px-4 py-1.5 rounded-full border border-blue-500/30 uppercase italic">M15</div>
+                                <h2 id="web-signal" class="text-2xl font-black italic uppercase text-white tracking-tighter italic">XAUUSD</h2>
+                            </div>
+                            <div id="web-time" class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">REALTIME SCANNING</div>
                         </div>
-                        <div class="panel-glow p-4 shrink-0 min-w-[160px] border-l-4 border-green-500 flex flex-col justify-center">
-                            <p class="text-[8px] text-slate-500 font-black uppercase tracking-tighter">Current Signal</p>
-                            <p id="live-signal" class="text-[11px] font-mono text-green-400 mt-1 italic font-bold uppercase">Waiting Signal</p>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                            <div class="bg-black/40 p-4 rounded-3xl border border-gray-800"><p class="text-[8px] text-gray-500 uppercase mb-1">Entry Area</p><p id="web-price" class="text-lg font-black text-blue-400">0.0000</p></div>
+                            <div class="bg-black/40 p-4 rounded-3xl border border-red-900/20 text-red-500"><p class="text-[8px] uppercase font-black mb-1">Stop Loss</p><p id="web-sl" class="text-lg font-black">0.0000</p></div>
+                            <div class="bg-black/40 p-4 rounded-3xl border border-green-900/20 text-green-500"><p class="text-[8px] uppercase font-black mb-1">Take Profit</p><p id="web-tp" class="text-lg font-black">0.0000</p></div>
+                            <div class="bg-black/40 p-4 rounded-3xl border border-cyan-900/20 text-cyan-400"><p class="text-[8px] uppercase font-black mb-1">SMC Zone</p><p id="web-zone" class="text-lg font-black italic uppercase">Waiting</p></div>
                         </div>
-                    </div>
-                    <!-- Area Chart Full Screen -->
-                    <div class="flex-grow relative bg-black">
-                        <div id="tv_chart_container" class="absolute inset-0"></div>
                     </div>
                 </div>
 
-                <!-- PAGE: ADMIN -->
-                <div id="page-admin" class="hidden p-6 max-w-4xl mx-auto">
-                    <div class="flex items-center gap-3 mb-8">
-                        <span class="text-3xl">⚙️</span>
-                        <div>
-                            <h2 class="text-xl font-black text-white uppercase italic">Admin Terminal</h2>
-                            <p class="text-[10px] text-slate-500 font-bold uppercase">Update Market Insight & Signals</p>
+                <!-- COMMUNITY FEED & BOT -->
+                <div class="space-y-6">
+                    <div class="glass-panel rounded-[32px] p-6 h-[400px] flex flex-col overflow-hidden border-cyan-500/10">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xs font-black uppercase italic tracking-tighter text-cyan-500"><i class="fas fa-users-viewfinder mr-2"></i>Community Mapping</h3>
+                        </div>
+                        <div id="map-container" class="flex-1 rounded-2xl bg-black/40 p-4 overflow-y-auto space-y-4">
+                            <!-- Bot Message -->
+                            <div class="bg-[#161a1e] p-3 rounded-xl border-l-4 border-blue-500 shadow-lg">
+                                <span class="text-[8px] font-black text-blue-500 uppercase">AI SYSTEM BOT</span>
+                                <p class="text-[10px] italic text-gray-400 mt-1 uppercase">BOS Confirmed on Gold M15. Scanning for Unmitigated Order Block.</p>
+                            </div>
+                            <div id="user-pings" class="space-y-3"></div>
+                        </div>
+                        <button onclick="sendPing()" class="mt-4 w-full bg-cyan-600/10 border border-cyan-500/20 text-cyan-500 py-3 rounded-xl text-[9px] font-black uppercase hover:bg-cyan-600 hover:text-white transition-all">Ping My Analysis</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- PAGE: AUTOSCAN VIP (The Advanced Engine) -->
+        <div id="page-autoscan" class="page px-4 lg:px-8 py-6">
+            <!-- GATEKEEPING: TAMPIL JIKA BUKAN VIP -->
+            <div id="autoscan-locked" class="max-w-xl mx-auto glass-panel rounded-[40px] p-12 text-center mt-10 hidden">
+                <i class="fas fa-lock text-5xl text-amber-500 mb-6"></i>
+                <h2 class="text-3xl font-black italic uppercase text-white mb-2 tracking-tighter">VIP Engine Locked</h2>
+                <p class="text-[10px] text-gray-500 font-bold uppercase mb-10 tracking-[0.2em] italic leading-relaxed">
+                    Akses strategi Scalping (M1-M5), Intraday, dan Swing <br> khusus untuk Member Lifetime.
+                </p>
+                <button onclick="switchPage('page-vip')" class="w-full bg-gradient-to-r from-amber-600 to-yellow-500 py-4 rounded-2xl font-black uppercase text-xs text-black shadow-xl shadow-amber-600/20 active:scale-95 transition-all">Upgrade to VIP Lifetime</button>
+            </div>
+
+            <!-- CONTENT: TAMPIL JIKA VIP -->
+            <div id="autoscan-content" class="max-w-5xl mx-auto glass-panel rounded-[40px] p-8 shadow-2xl hidden">
+                <div class="flex justify-between items-center mb-8 px-4 border-b border-gray-800 pb-6">
+                    <div>
+                        <h2 class="text-2xl font-black uppercase italic tracking-tighter"><i class="fas fa-robot text-yellow-500 mr-2"></i> AI Autoscan VIP</h2>
+                        <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1">Multi-Timeframe Confirmation Active</p>
+                    </div>
+                    <span class="text-[9px] font-black text-green-500 animate-pulse uppercase tracking-widest bg-green-500/10 px-3 py-1 rounded-full border border-green-500/20">● All Pairs Scanning</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-separate border-spacing-y-3">
+                        <thead>
+                            <tr class="text-[10px] text-gray-500 uppercase tracking-widest">
+                                <th class="px-6 pb-2">Trading Pair</th>
+                                <th class="px-6 pb-2">Market Price</th>
+                                <th class="px-6 pb-2">SMC Structure Analysis</th>
+                                <th class="px-6 pb-2 text-center">Execution</th>
+                            </tr>
+                        </thead>
+                        <tbody id="scanner-body">
+                            <!-- Rows will be injected by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: VISUAL AI ANALYST (AI Vision) -->
+        <div id="page-visual" class="page px-4 lg:px-8 py-6">
+            <div class="max-w-xl mx-auto glass-panel p-10 rounded-[40px] shadow-2xl text-center">
+                <div class="mb-8">
+                    <i class="fas fa-microchip text-5xl text-cyan-500 mb-6 shadow-[0_0_20px_rgba(6,182,212,0.3)]"></i>
+                    <h2 class="text-2xl font-black italic uppercase text-white mb-2">Visual AI Analyst</h2>
+                    <p class="text-[9px] text-gray-500 font-bold uppercase italic tracking-widest">OCR + Pattern Recognition SMC Engine</p>
+                </div>
+                
+                <div onclick="triggerUpload()" class="border-2 border-dashed border-gray-800 rounded-[32px] p-12 bg-black/20 mb-8 cursor-pointer hover:border-cyan-500/50 transition-all group relative overflow-hidden">
+                    <input type="file" id="ai-upload" class="hidden" onchange="handleAIUpload(event)" accept="image/*">
+                    <div id="upload-preview" class="relative z-10">
+                        <i class="fas fa-cloud-upload-alt text-4xl text-gray-600 mb-4 group-hover:scale-110 transition-transform"></i>
+                        <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Drop Chart Screenshot Here</p>
+                    </div>
+                </div>
+
+                <div class="relative mb-8 text-left">
+                    <label class="text-[8px] font-black text-gray-500 uppercase ml-4 mb-2 block">Custom AI Prompt (Optional)</label>
+                    <textarea id="ai-chat-input" placeholder="e.g. Cari unmitigated Order Block di area ini..." class="w-full bg-black/40 border border-gray-800 rounded-[24px] p-5 text-[11px] italic text-gray-300 focus:outline-none focus:border-cyan-500 h-24 resize-none transition-all"></textarea>
+                </div>
+                
+                <button id="btn-ai-scan" onclick="analyzeVisual()" class="w-full bg-cyan-600 hover:bg-cyan-700 py-5 rounded-[24px] font-black uppercase text-xs shadow-lg shadow-cyan-900/40 text-white active:scale-95 transition-all">Start AI Deep Scan</button>
+                
+                <div id="ai-result" class="mt-8 hidden glass-panel p-6 rounded-[32px] border-cyan-500/30 text-left animate-fadeIn">
+                    <div class="flex items-center justify-between mb-4">
+                        <p class="text-[10px] text-cyan-500 font-black uppercase italic tracking-widest">Analysis Result:</p>
+                        <span class="text-[8px] bg-cyan-500/10 text-cyan-400 px-2 py-0.5 rounded uppercase font-bold italic">SMC Logic v2</span>
+                    </div>
+                    <div id="ai-note" class="text-[11px] leading-relaxed text-gray-300 font-medium"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PAGE: ADMIN MASTER CONSOLE (The Master Console) -->
+        <div id="page-admin" class="page px-4 lg:px-8 py-6">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex items-center gap-4 mb-8">
+                    <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-900/40">
+                        <i class="fas fa-terminal text-white text-xl"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-3xl font-black italic uppercase text-white tracking-tighter">Master Console</h2>
+                        <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Root Admin Access Only</p>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <!-- Update Signal Form -->
+                    <div class="glass-panel p-8 rounded-[40px] border-blue-500/10">
+                        <h3 class="text-xs font-black uppercase text-blue-500 mb-6 italic tracking-widest border-b border-gray-800 pb-3">Update Live Signal</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="text-[8px] font-black text-gray-500 uppercase ml-2 mb-1 block">Entry Area</label>
+                                <input id="adm-entry" type="text" placeholder="e.g. 2345.50" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-white focus:border-blue-500 outline-none">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="text-[8px] font-black text-gray-500 uppercase ml-2 mb-1 block">Stop Loss</label>
+                                    <input id="adm-sl" type="text" placeholder="SL" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-white focus:border-red-500 outline-none">
+                                </div>
+                                <div>
+                                    <label class="text-[8px] font-black text-gray-500 uppercase ml-2 mb-1 block">Take Profit</label>
+                                    <input id="adm-tp" type="text" placeholder="TP" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-white focus:border-green-500 outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="text-[8px] font-black text-gray-500 uppercase ml-2 mb-1 block">Structure Note</label>
+                                <input id="adm-note" type="text" placeholder="e.g. BOS Confirmed" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-white focus:border-blue-500 outline-none">
+                            </div>
+                            <button onclick="updateAdminSignal()" class="w-full bg-blue-600 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-white shadow-xl shadow-blue-900/20 active:scale-95 transition-all">Push Update to Users</button>
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="panel-glow p-6 border-blue-500/10">
-                            <h3 class="text-[10px] font-black text-blue-500 mb-6 uppercase tracking-[3px]">Sinyal Dashboard</h3>
-                            <div class="space-y-4">
-                                <div class="space-y-1">
-                                    <label class="text-[9px] font-black text-slate-600 uppercase">Pair Market</label>
-                                    <input id="inp-pair" type="text" placeholder="ex: XAUUSD" class="w-full bg-slate-900 border border-slate-800 p-3 rounded-xl text-sm outline-none focus:border-blue-500 text-white font-mono">
-                                </div>
-                                <div class="space-y-1">
-                                    <label class="text-[9px] font-black text-slate-600 uppercase">Structure Type</label>
-                                    <input id="inp-struct" type="text" placeholder="ex: BOS CONFIRMED" class="w-full bg-slate-900 border border-slate-800 p-3 rounded-xl text-sm outline-none focus:border-blue-500 text-white font-mono">
-                                </div>
-                                <button onclick="updateMarketData()" class="w-full bg-blue-600 p-4 rounded-xl text-[10px] font-black text-white shadow-xl shadow-blue-900/20 hover:bg-blue-500 transition-all uppercase tracking-widest">Update Live Web</button>
+
+                    <!-- User Management & Stats -->
+                    <div class="glass-panel p-8 rounded-[40px] border-gray-800">
+                        <h3 class="text-xs font-black uppercase text-gray-500 mb-6 italic tracking-widest border-b border-gray-800 pb-3">Platform Analytics</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-gray-800">
+                                <p class="text-[8px] text-gray-500 uppercase mb-1">Total Users</p>
+                                <p class="text-2xl font-black text-white italic">1.240</p>
+                            </div>
+                            <div class="bg-black/40 p-5 rounded-[24px] border border-gray-800">
+                                <p class="text-[8px] text-gray-500 uppercase mb-1">VIP Member</p>
+                                <p class="text-2xl font-black text-amber-500 italic">482</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- PAGE: PROFILE -->
-                <div id="page-profile" class="hidden p-10 text-center max-w-sm mx-auto">
-                    <div class="w-28 h-28 bg-gradient-to-tr from-blue-600 to-indigo-900 rounded-[2rem] mx-auto mb-8 flex items-center justify-center text-4xl shadow-2xl rotate-3 border-4 border-slate-800">👤</div>
-                    <h2 id="profile-name" class="text-2xl font-black text-white tracking-tighter uppercase">Guest Trader</h2>
-                    <p class="text-blue-500 text-[10px] mt-1 font-black uppercase tracking-widest italic">Official Member V2</p>
-                    <div class="mt-10 space-y-3">
-                        <div class="panel-glow p-4 text-left border-slate-800/50">
-                            <p class="text-[8px] text-slate-600 font-black uppercase tracking-widest">Account Authority</p>
-                            <p id="profile-role" class="text-xs font-bold text-white mt-1">STANDARD MEMBER</p>
+                        <div class="mt-6 p-4 bg-blue-600/5 rounded-2xl border border-blue-500/10">
+                            <p class="text-[10px] text-blue-400 font-bold italic mb-2"><i class="fas fa-info-circle mr-2"></i>Admin Info</p>
+                            <p class="text-[9px] text-gray-400 leading-relaxed uppercase font-medium">Sistem sedang melakukan Auto-Backup database Firebase setiap 1 jam sekali.</p>
                         </div>
                     </div>
                 </div>
-            </main>
+            </div>
+        </div>
+        <!-- MODAL PEMILIHAN MODE (POWER OF THREE) -->
+    <div id="signal-modal" class="hidden fixed inset-0 z-[99999] bg-black/95 flex items-center justify-center p-4 backdrop-blur-md">
+        <div class="glass-panel w-full max-w-xs rounded-[40px] p-8 shadow-2xl text-center border-blue-500/20">
+            <h3 id="modal-title" class="text-3xl font-black italic text-blue-500 uppercase mb-2 tracking-tighter">XAUUSD</h3>
+            <p class="text-[10px] text-gray-500 font-bold uppercase mb-8">Pilih Strategi Trading</p>
+            <div class="space-y-3">
+                <button onclick="selectTradeType('SCALPING', 'M1')" class="w-full bg-blue-600/10 hover:bg-blue-600 border border-blue-500/20 text-blue-500 hover:text-white py-4 rounded-2xl font-black text-[10px] transition-all uppercase italic">⚡ SCALPING (M1)</button>
+                <button onclick="selectTradeType('INTRADAY', 'M15')" class="w-full bg-cyan-600/10 hover:bg-cyan-600 border border-cyan-500/20 text-cyan-500 hover:text-white py-4 rounded-2xl font-black text-[10px] transition-all uppercase italic">🕒 INTRADAY (M15)</button>
+                <button onclick="selectTradeType('SWING', 'H4')" class="w-full bg-purple-600/10 hover:bg-purple-600 border border-purple-500/20 text-purple-500 hover:text-white py-4 rounded-2xl font-black text-[10px] transition-all uppercase italic">🚀 SWING (H4)</button>
+            </div>
+            <button onclick="closeModal()" class="w-full mt-6 text-gray-600 text-[10px] font-bold uppercase tracking-widest">Cancel</button>
         </div>
     </div>
-    <!-- SCRIPTS: TradingView & Logika Aplikasi -->
-    <script src="https://s3.tradingview.com/tv.js"></script>
+
     <script>
-        // --- KONFIGURASI DATABASE LOKAL ---
-        const DATABASE = {
-            admin: { user: "admin", pass: "bro123", name: "PSBETUNGPUTRA CYBER", role: "ROOT ADMIN" },
-            member: { user: "trader", pass: "guest123", name: "SMART TRADER", role: "VIP MEMBER" }
+        // CONFIGURATION
+        const fbURL = "https://ai-signalfx-default-rtdb.asia-southeast1.firebasedatabase.app/";
+        let currentUser = null;
+        let currentPair = "XAUUSD";
+        let tvWidget = null;
+        const allPairs = ["XAUUSD", "GBPUSD", "EURUSD", "USDJPY", "BTCUSDT", "ETHUSDT"];
+
+        // 1. AUTHENTICATION SYSTEM
+        const ACCESS_KEYS = {
+            "psbetung": { pass: "admin123", role: "ADMIN", status: "VIP", name: "PSBETUNGPUTRA" },
+            "trader": { pass: "guest123", role: "USER", status: "FREE", name: "GUEST TRADER" }
         };
 
-        let isAppInitialized = false;
-
-        // Fungsi Login
         function handleLogin() {
-            const u = document.getElementById('username').value;
+            const u = document.getElementById('username').value.toLowerCase();
             const p = document.getElementById('password').value;
-            const error = document.getElementById('login-error');
+            const err = document.getElementById('login-error');
 
-            if (u === DATABASE.admin.user && p === DATABASE.admin.pass) {
-                launchApp(DATABASE.admin);
-            } else if (u === DATABASE.member.user && p === DATABASE.member.pass) {
-                launchApp(DATABASE.member);
+            if (ACCESS_KEYS[u] && ACCESS_KEYS[u].pass === p) {
+                currentUser = ACCESS_KEYS[u];
+                launchApp();
             } else {
-                error.classList.remove('hidden');
+                err.classList.remove('hidden');
+                setTimeout(() => err.classList.add('hidden'), 3000);
             }
         }
 
-        // Jalankan Aplikasi
-        function launchApp(userProfile) {
+        function launchApp() {
             document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('display-name').innerText = currentUser.name;
+            document.getElementById('status-badge').innerText = currentUser.status + " MEMBER";
             
-            // Set Profil
-            document.getElementById('profile-name').innerText = userProfile.name;
-            document.getElementById('profile-role').innerText = userProfile.role;
-            
-            // Cek Jika Admin
-            if(userProfile.role === "ROOT ADMIN") {
-                document.getElementById('admin-nav-btn').classList.remove('hidden');
-                document.getElementById('admin-indicator').classList.remove('hidden');
+            if(currentUser.role === 'ADMIN') {
+                document.getElementById('admin-nav').classList.remove('hidden');
+                document.getElementById('status-badge').classList.replace('vip-status-gold', 'bg-blue-600');
+                document.getElementById('status-badge').innerText = "SYSTEM ADMIN";
             }
 
-            // Init Chart Jika Belum
-            if(!isAppInitialized) {
-                initTradingView();
-                isAppInitialized = true;
+            // VIP Gatekeeping Logic
+            if(currentUser.status === 'VIP') {
+                document.getElementById('autoscan-content').classList.remove('hidden');
+                document.getElementById('autoscan-locked').classList.add('hidden');
+            } else {
+                document.getElementById('autoscan-locked').classList.remove('hidden');
             }
+
+            initTV("OANDA:XAUUSD");
+            startLiveSync();
         }
 
-        // Update Dashboard dari Admin Panel
-        function updateMarketData() {
-            const pair = document.getElementById('inp-pair').value;
-            const struct = document.getElementById('inp-struct').value;
-            
-            if(pair) document.getElementById('live-signal').innerText = "SIGNAL: " + pair.toUpperCase();
-            if(struct) document.getElementById('live-structure').innerText = struct.toUpperCase();
-            
-            alert("SUCCESS: Data Dashboard Berhasil Diperbarui!");
-            showPage('dashboard');
+        // 2. NAVIGATION & UI
+        function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+
+        function switchPage(pageId, el) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+            if(el) el.classList.add('nav-active');
+            if(window.innerWidth < 1024) toggleMenu();
         }
 
-        // Navigasi Antar Halaman
-        function showPage(pageId) {
-            const pages = ['dashboard', 'admin', 'profile'];
-            pages.forEach(p => {
-                document.getElementById('page-' + p).classList.add('hidden');
-                const nav = document.getElementById('nav-' + p);
-                if(nav) nav.classList.remove('active-link');
-            });
-            
-            document.getElementById('page-' + pageId).classList.remove('hidden');
-            const activeNav = document.getElementById('nav-' + pageId);
-            if(activeNav) activeNav.classList.add('active-link');
-        }
-
-        // Load Chart TradingView
-        function initTradingView() {
-            new TradingView.widget({
+        // 3. TRADINGVIEW ENGINE
+        function initTV(symbol) {
+            document.getElementById('tv-chart-box').innerHTML = "";
+            tvWidget = new TradingView.widget({
                 "autosize": true,
-                "symbol": "OANDA:XAUUSD",
-                "interval": "H1",
+                "symbol": symbol,
+                "interval": "15",
                 "timezone": "Asia/Jakarta",
                 "theme": "dark",
                 "style": "1",
                 "locale": "id",
-                "toolbar_bg": "#0f172a",
-                "enable_publishing": false,
-                "hide_side_toolbar": false, // Agar drawing tools SMC muncul
+                "toolbar_bg": "#161a1e",
+                "enable_publishing": true,
+                "withdateranges": true,
+                "hide_side_toolbar": false,
                 "allow_symbol_change": true,
-                "container_id": "tv_chart_container"
+                "details": true,
+                "hotlist": true,
+                "calendar": true,
+                "container_id": "tv-chart-box"
             });
         }
 
-        // Logout
+        // 4. FIREBASE SYNC (LIVE DATA)
+        function startLiveSync() {
+            // Sync Dashboard Signal
+            setInterval(async () => {
+                try {
+                    const res = await fetch(fbURL + "signal.json");
+                    const data = await res.json();
+                    if(data) {
+                        document.getElementById('web-price').innerText = data.entry || '---';
+                        document.getElementById('web-sl').innerText = data.sl || '---';
+                        document.getElementById('web-tp').innerText = data.tp || '---';
+                        document.getElementById('web-zone').innerText = data.note || 'WAITING';
+                    }
+                } catch(e) { console.error("Sync Error:", e); }
+            }, 3000);
+
+            // Sync AutoScan Table (VIP Only)
+            if(currentUser.status === 'VIP') {
+                setInterval(updateScannerTable, 5000);
+            }
+        }
+
+        async function updateScannerTable() {
+            const tbody = document.getElementById('scanner-body');
+            try {
+                const res = await fetch(fbURL + "all_signals.json");
+                const data = await res.json();
+                let html = "";
+                allPairs.forEach(pair => {
+                    const info = (data && data[pair]) ? data[pair] : { price: "Scanning...", note: "Wait for BOS/CHoCH" };
+                    html += `
+                        <tr class="bg-black/20 border border-gray-800 rounded-2xl transition-all hover:bg-blue-500/5">
+                            <td class="px-6 py-4 font-black text-white text-sm italic italic">${pair}</td>
+                            <td class="px-6 py-4 font-mono text-xs text-blue-400 font-bold">${info.price}</td>
+                            <td class="px-6 py-4 text-[9px] italic text-gray-500 uppercase font-black">${info.note}</td>
+                            <td class="px-6 py-4 text-center">
+                                <button onclick="viewPair('${pair}')" class="bg-blue-600/20 text-blue-500 border border-blue-500/30 text-[8px] font-black px-4 py-2 rounded-xl uppercase hover:bg-blue-600 hover:text-white transition-all">Analyze</button>
+                            </td>
+                        </tr>`;
+                });
+                tbody.innerHTML = html;
+            } catch(e) { console.log(e); }
+        }
+
+        // 5. ADMIN CONTROLS
+        async function updateAdminSignal() {
+            const data = {
+                entry: document.getElementById('adm-entry').value,
+                sl: document.getElementById('adm-sl').value,
+                tp: document.getElementById('adm-tp').value,
+                note: document.getElementById('adm-note').value,
+                timestamp: new Date().getTime()
+            };
+
+            await fetch(fbURL + "signal.json", { method: 'PUT', body: JSON.stringify(data) });
+            alert("SUCCESS: Signal Pushed to All Users!");
+        }
+
+        // 6. COMMUNITY PING (SPOOLER)
+        function sendPing() {
+            const container = document.getElementById('user-pings');
+            const msg = document.createElement('div');
+            msg.className = "bg-cyan-500/5 p-3 rounded-xl border border-cyan-500/10 animate-pulse";
+            msg.innerHTML = `<span class="text-[8px] font-black text-cyan-500 uppercase">${currentUser.name}</span>
+                             <p class="text-[9px] text-gray-400 italic mt-1 uppercase italic">I've spotted an Institutional setup on ${currentPair}!</p>`;
+            container.prepend(msg);
+        }
+
+        function viewPair(pair) {
+            selectedPair = pair;
+            document.getElementById('modal-title').innerText = pair;
+            document.getElementById('signal-modal').classList.remove('hidden');
+        }
+
+        function closeModal() { document.getElementById('signal-modal').classList.add('hidden'); }
+
+        function selectTradeType(type, tf) {
+            currentPair = selectedPair;
+            closeModal();
+            switchPage('page-dash', document.querySelectorAll('.nav-item')[0]);
+            document.getElementById('web-signal').innerText = currentPair + " - " + type;
+            document.getElementById('tf-badge').innerText = tf;
+            initTV("OANDA:" + currentPair);
+        }
+
         function logout() { location.reload(); }
     </script>
 </body>
