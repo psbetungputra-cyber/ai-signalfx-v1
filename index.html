@@ -650,24 +650,22 @@ async function sendPing(manualMsg = null) {
 }
         async function fetchMarketNews() {
     const newsContainer = document.getElementById('market-news-feed');
-    if (!newsContainer) return;
+    if (!newsContainer) { console.log("Container berita tidak ditemukan!"); return; }
 
     try {
-        const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.forexlive.com/rss');
-        const data = await res.json();
+        const response = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.forexlive.com/feed');
+        const data = await response.json();
+        console.log("Data Berita:", data); // Cek di F12 -> Console
         
-        if (data.items) {
-            newsContainer.innerHTML = ""; 
+        if (data.items && data.items.length > 0) {
+            newsContainer.innerHTML = "";
             data.items.slice(0, 2).forEach(item => {
-                const newsHtml = `
-                    <div class="bg-amber-500/10 p-3 rounded-xl border border-amber-500/30 mb-2 shadow-lg">
-                        <span class="text-[7px] font-black text-amber-500 uppercase tracking-widest">Global Market News</span>
-                        <p class="text-[9px] text-white font-bold leading-tight mt-1 uppercase">${item.title}</p>
-                    </div>`;
-                newsContainer.insertAdjacentHTML('beforeend', newsHtml);
+                newsContainer.innerHTML += `<div class="bg-amber-500/10 p-3 rounded-xl border border-amber-500/30 mb-2">
+                    <p class="text-[9px] text-white font-bold">${item.title}</p>
+                </div>`;
             });
         }
-    } catch (e) { console.log("Gagal tarik berita"); }
+    } catch (e) { console.error("Error Fetch News:", e); }
 }
 
 async function handleImageUpload(input) {
