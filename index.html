@@ -401,6 +401,7 @@
 
             initTV("OANDA:XAUUSD");
             startLiveSync();
+            startCommunityLiveFeed();
         }
 
         // 2. NAVIGATION & UI
@@ -496,14 +497,32 @@
         }
 
         // 6. COMMUNITY PING (SPOOLER)
-        function sendPing() {
-            const container = document.getElementById('user-pings');
-            const msg = document.createElement('div');
-            msg.className = "bg-cyan-500/5 p-3 rounded-xl border border-cyan-500/10 animate-pulse";
-            msg.innerHTML = `<span class="text-[8px] font-black text-cyan-500 uppercase">${currentUser.name}</span>
-                             <p class="text-[9px] text-gray-400 italic mt-1 uppercase italic">I've spotted an Institutional setup on ${currentPair}!</p>`;
-            container.prepend(msg);
-        }
+        async function sendPing() {
+    if (!currentUser) return; // Keamanan agar guest tak terdaftar tidak bisa spam
+    
+    const user = currentUser.name;
+    const pair = currentPair;
+    // Popup untuk memilih sentimen (Bisa lo kembangkan jadi modal nantinya)
+    const sentiment = confirm(`Analisa ${pair}: Klik OK untuk BULLISH (BUY), Cancel untuk BEARISH (SELL)`) ? "BUY/LONG" : "SELL/SHORT";
+    
+    const pingData = {
+        user: user,
+        pair: pair,
+        sentiment: sentiment,
+        msg: `SMC Structure identified on ${pair}. Market bias is ${sentiment}.`,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    try {
+        // PUSH data ke Firebase agar semua user bisa lihat
+        await fetch(fbURL + "community_feed.json", {
+            method: 'POST',
+            body: JSON.stringify(pingData)
+        });
+    } catch (e) {
+        console.error("Gagal mengirim ping:", e);
+    }
+}
 
         function viewPair(pair) {
             selectedPair = pair;
@@ -523,6 +542,51 @@
         }
 
         function logout() { location.reload(); }
+        async function startCommunityLiveFeed() {
+    const container = document.getElementById('user-pings');
+    if (!container) return;
+
+    // Fungsi untuk menarik data terbaru
+    const refreshFeed = async () => {
+        try {
+            // Kita ambil 10 pesan terakhir saja agar ringan
+            const res = await fetch(fbURL + 'community_feed.json?orderBy="$key"&limitToLast=10');
+            const data = await res.json();
+            
+            if (data) {
+                container.innerHTML = ""; // Bersihkan kontainer lama
+                // Urutkan data agar yang terbaru di atas
+                const sortedItems = Object.values(data).reverse();
+                
+                sortedItems.forEach(item => {
+                    const isLong = item.sentiment.includes("BUY");
+                    const themeColor = isLong ? "blue" : "red";
+                    
+                    const feedHtml = `
+                        <div class="bg-[#161a1e] p-4 rounded-2xl border-l-4 border-${themeColor}-500 shadow-lg mb-3 animate-fadeIn">
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="text-[8px] font-black text-${themeColor}-400 uppercase tracking-widest">${item.user}</span>
+                                <span class="text-[7px] text-gray-600 font-bold">${item.timestamp}</span>
+                            </div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] font-black text-white">${item.pair}</span>
+                                <span class="text-[8px] bg-${themeColor}-500/10 text-${themeColor}-500 px-2 py-0.5 rounded-md font-black italic">${item.sentiment}</span>
+                            </div>
+                            <p class="text-[9px] text-gray-400 italic leading-relaxed uppercase">${item.msg}</p>
+                        </div>
+                    `;
+                    container.insertAdjacentHTML('beforeend', feedHtml);
+                });
+            }
+        } catch (e) {
+            console.log("Feed Error:", e);
+        }
+    };
+
+    // Jalankan setiap 5 detik
+    setInterval(refreshFeed, 5000);
+    refreshFeed(); // Jalankan sekali di awal
+}
     </script>
 </body>
 </html>
