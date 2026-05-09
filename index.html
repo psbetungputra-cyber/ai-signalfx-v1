@@ -2,116 +2,129 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI SIGNALFX Pro v1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AI SIGNALFX PRO</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body { background-color: #06090f; color: #cbd5e1; }
-        .panel-glow { border: 1px solid #1e293b; background: #0f172a; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5); }
+        body { background-color: #06090f; color: #cbd5e1; overflow: hidden; font-family: sans-serif; }
+        .panel-glow { border: 1px solid #1e293b; background: #0f172a; }
+        .active-link { border-left: 4px solid #3b82f6; background: #1e293b; color: white; }
+        .hidden { display: none; }
     </style>
 </head>
-<body class="min-h-screen flex flex-col">
+<body class="h-screen flex flex-col">
 
-    <!-- Navbar Dasar -->
-    <header class="p-4 border-b border-slate-800 bg-[#0f172a] flex justify-between items-center">
+    <!-- NAVBAR -->
+    <header class="h-[55px] px-4 border-b border-slate-800 bg-[#0f172a] flex justify-between items-center shrink-0">
         <div class="flex items-center gap-2">
-            <div class="w-3 h-3 bg-blue-500 rounded-full animate-pulse"></div>
-            <h1 class="font-bold text-lg tracking-wider text-white">AI SIGNALFX <span class="text-blue-500">V1</span></h1>
+            <span class="text-blue-500 font-bold">AI SIGNALFX</span>
         </div>
-        <div class="flex gap-4 text-xs font-medium">
-            <span class="text-green-500 bg-green-500/10 px-2 py-1 rounded border border-green-500/20">MARKET LIVE</span>
-        </div>
+        <!-- Tombol Profile (Simulasi) -->
+        <button onclick="showPage('profile')" class="flex items-center gap-2 bg-slate-800 px-3 py-1 rounded-full border border-slate-700">
+            <div class="w-6 h-6 bg-blue-600 rounded-full flex items-center justify-center text-[10px]">AD</div>
+            <span class="text-xs hidden md:block">Admin</span>
+        </button>
     </header>
 
-    <main class="flex-grow p-3 grid grid-cols-12 gap-3">
+    <div class="flex flex-grow overflow-hidden">
         
-        <!-- Sidebar Kiri: Monitor Sinyal AI -->
-        <aside class="col-span-12 lg:col-span-3 space-y-3">
-            <div class="panel-glow p-4 rounded-lg">
-                <h2 class="text-xs font-semibold text-slate-500 uppercase mb-3 italic">Market Structure Analysis</h2>
-                <div class="space-y-3">
-                    <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-                        <span class="text-sm">Trend Status:</span>
-                        <span class="text-blue-400 font-mono text-sm font-bold">BOS CONFIRMED</span>
+        <!-- SIDEBAR MENU -->
+        <nav class="w-16 lg:w-60 bg-[#0f172a] border-r border-slate-800 flex flex-col shrink-0">
+            <div class="flex flex-col gap-1 p-2">
+                <button onclick="showPage('dashboard')" class="p-3 text-left hover:bg-slate-800 rounded flex items-center gap-3 active-link" id="btn-dashboard">
+                    <span class="text-xs lg:text-sm">📊 <span class="hidden lg:inline">Dashboard</span></span>
+                </button>
+                <button onclick="showPage('admin')" class="p-3 text-left hover:bg-slate-800 rounded flex items-center gap-3 text-slate-400" id="btn-admin">
+                    <span class="text-xs lg:text-sm">⚙️ <span class="hidden lg:inline">Admin Panel</span></span>
+                </button>
+            </div>
+            <div class="mt-auto p-4 border-t border-slate-800">
+                <button class="text-red-400 text-xs w-full text-left">🚪 <span class="hidden lg:inline">Logout</span></button>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-grow relative bg-[#06090f] overflow-y-auto">
+            
+            <!-- PAGE: DASHBOARD -->
+            <div id="page-dashboard" class="h-full flex flex-col">
+                <div class="p-2 border-b border-slate-800 flex gap-2 overflow-x-auto">
+                    <div class="panel-glow p-2 rounded shrink-0 min-w-[120px]">
+                        <p class="text-[9px] text-slate-500 uppercase">SMC Trend</p>
+                        <p class="text-xs font-mono text-blue-400">BOS CONFIRMED</p>
                     </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-sm">Liquidity:</span>
-                        <span class="text-orange-400 font-mono text-sm">HUNTING</span>
+                    <div class="panel-glow p-2 rounded shrink-0 min-w-[120px]">
+                        <p class="text-[9px] text-slate-500 uppercase">Signal</p>
+                        <p class="text-xs font-mono text-green-400">BUY XAUUSD</p>
+                    </div>
+                </div>
+                <div class="flex-grow relative bg-black">
+                    <div id="tradingview_pro" class="absolute inset-0"></div>
+                </div>
+            </div>
+
+            <!-- PAGE: ADMIN -->
+            <div id="page-admin" class="hidden p-6">
+                <h2 class="text-xl font-bold mb-4">Admin Control</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="panel-glow p-4 rounded-lg">
+                        <h3 class="text-sm font-bold mb-2">Input Sinyal Baru</h3>
+                        <input type="text" placeholder="Pair (ex: XAUUSD)" class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm mb-2">
+                        <select class="w-full bg-slate-900 border border-slate-700 p-2 rounded text-sm mb-2">
+                            <option>Buy Setup</option>
+                            <option>Sell Setup</option>
+                        </select>
+                        <button class="w-full bg-blue-600 p-2 rounded text-sm font-bold">Broadcast Signal</button>
+                    </div>
+                    <div class="panel-glow p-4 rounded-lg text-slate-500 italic text-sm">
+                        Fitur manajemen user akan muncul di sini...
                     </div>
                 </div>
             </div>
 
-            <div class="panel-glow p-4 rounded-lg flex-grow">
-                <h2 class="text-xs font-semibold text-slate-500 uppercase mb-3 italic">AI Signal Alerts</h2>
-                <div class="space-y-2 max-h-[300px] overflow-y-auto">
-                    <!-- Contoh List Sinyal -->
-                    <div class="p-2 bg-slate-900 rounded border-l-2 border-green-500">
-                        <p class="text-[10px] text-slate-500">Just Now</p>
-                        <p class="text-sm font-bold text-white italic">BUY SETUP - XAUUSD</p>
-                        <p class="text-[11px]">Entry at Demand Zone (SMC)</p>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- TradingView Widget BEGIN - FULL VERSION -->
-<div class="tradingview-widget-container" style="height:100%;width:100%">
-  <div id="tradingview_pro" style="height:100%;width:100%"></div>
-  <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-  <script type="text/javascript">
-  new TradingView.widget(
-  {
-  "autosize": true,
-  "symbol": "OANDA:XAUUSD", // Default saya set ke GOLD (XAU/USD)
-  "interval": "H1",
-  "timezone": "Asia/Jakarta",
-  "theme": "dark",
-  "style": "1",
-  "locale": "id",
-  "toolbar_bg": "#1e293b",
-  "enable_publishing": false,
-  "hide_side_toolbar": false, // Tool gambar (garis, kursor, dll) muncul
-  "allow_symbol_change": true, // Biar kamu bisa ganti pair di webnya langsung
-  "details": true, // Munculkan detail harga di kanan
-  "hotlist": true, // Munculkan daftar harga populer
-  "calendar": true, // Munculkan kalender ekonomi
-  "show_popup_button": true,
-  "popup_width": "1000",
-  "popup_height": "650",
-  "container_id": "tradingview_pro"
-});
-  </script>
-</div>
-<!-- TradingView Widget END -->
-        <section class="col-span-12 lg:col-span-9 flex flex-col gap-3">
-            <div class="panel-glow rounded-lg overflow-hidden flex-grow relative min-h-[500px]">
-                <!-- Bagian ini nanti kita isi Widget TradingView -->
-                <div class="absolute inset-0 flex items-center justify-center bg-black/20">
-                   <p class="text-slate-600 animate-pulse font-mono">WAITING FOR TRADINGVIEW WIDGET...</p>
+            <!-- PAGE: PROFILE -->
+            <div id="page-profile" class="hidden p-6 text-center">
+                <div class="w-24 h-24 bg-blue-600 rounded-full mx-auto mb-4 flex items-center justify-center text-3xl font-bold">AD</div>
+                <h2 class="text-xl font-bold">Trader Admin</h2>
+                <p class="text-slate-500 text-sm mb-4">Premium Member</p>
+                <div class="max-w-xs mx-auto space-y-2">
+                    <button class="w-full panel-glow p-2 rounded text-sm">Edit Profile</button>
+                    <button class="w-full panel-glow p-2 rounded text-sm border-red-900 text-red-500">Reset Data</button>
                 </div>
             </div>
 
-            <!-- Panel Bawah: Kalkulator / Info Tambahan -->
-            <div class="grid grid-cols-3 gap-3">
-                <div class="panel-glow p-3 rounded-lg text-center">
-                    <p class="text-[10px] text-slate-500 uppercase">Volume Profile</p>
-                    <p class="text-sm font-bold">Institutional</p>
-                </div>
-                <div class="panel-glow p-3 rounded-lg text-center">
-                    <p class="text-[10px] text-slate-500 uppercase">Risk Management</p>
-                    <p class="text-sm font-bold">1:3 Ratio</p>
-                </div>
-                <div class="panel-glow p-3 rounded-lg text-center">
-                    <p class="text-[10px] text-slate-500 uppercase">AI Confidence</p>
-                    <p class="text-sm font-bold text-blue-400">92%</p>
-                </div>
-            </div>
-        </section>
-    </main>
+        </main>
+    </div>
 
-    <footer class="p-2 bg-[#0f172a] border-t border-slate-800 text-center">
-        <p class="text-[10px] text-slate-600">&copy; 2026 AI SIGNALFX - Developed by Psbetungputra-Cyber</p>
-    </footer>
+    <!-- SCRIPTS -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <script>
+        // Navigasi Halaman
+        function showPage(pageId) {
+            ['dashboard', 'admin', 'profile'].forEach(p => {
+                document.getElementById('page-' + p).classList.add('hidden');
+                const btn = document.getElementById('btn-' + p);
+                if(btn) btn.classList.remove('active-link', 'text-white');
+            });
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+            const activeBtn = document.getElementById('btn-' + pageId);
+            if(activeBtn) activeBtn.classList.add('active-link', 'text-white');
+        }
 
+        // Widget TradingView
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "OANDA:XAUUSD",
+            "interval": "H1",
+            "timezone": "Asia/Jakarta",
+            "theme": "dark",
+            "style": "1",
+            "locale": "id",
+            "toolbar_bg": "#0f172a",
+            "hide_side_toolbar": false,
+            "allow_symbol_change": true,
+            "container_id": "tradingview_pro"
+        });
+    </script>
 </body>
 </html>
