@@ -28,6 +28,17 @@
             margin: 0; 
             overflow: hidden; 
         }
+        /* Batasi tinggi kolom 3 agar tidak memanjang ke bawah */
+#user-pings {
+    max-height: 500px; 
+    overflow-y: auto;  
+    padding-right: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: #3b82f6 #161a1e;
+}
+/* Efek scrollbar untuk browser Chrome/Safari */
+#user-pings::-webkit-scrollbar { width: 4px; }
+#user-pings::-webkit-scrollbar-thumb { background: #3b82f6; border-radius: 10px; }
         
         /* Sidebar Styling */
         #sidebar { 
@@ -401,8 +412,10 @@
 
             initTV("OANDA:XAUUSD");
             startLiveSync();
-            startCommunityLiveFeed();
-        }
+             // AKTIVASI FITUR BARU
+    startCommunityLiveFeed(); // Jalankan Feed Komunitas
+    fetchMarketNews();       // Ambil Berita Terbaru
+}
 
         // 2. NAVIGATION & UI
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
@@ -546,46 +559,86 @@
     const container = document.getElementById('user-pings');
     if (!container) return;
 
-    // Fungsi untuk menarik data terbaru
     const refreshFeed = async () => {
         try {
-            // Kita ambil 10 pesan terakhir saja agar ringan
             const res = await fetch(fbURL + 'community_feed.json?orderBy="$key"&limitToLast=10');
             const data = await res.json();
             
             if (data) {
-                container.innerHTML = ""; // Bersihkan kontainer lama
-                // Urutkan data agar yang terbaru di atas
-                const sortedItems = Object.values(data).reverse();
-                
-                sortedItems.forEach(item => {
-                    const isLong = item.sentiment.includes("BUY");
-                    const themeColor = isLong ? "blue" : "red";
+                container.innerHTML = ""; 
+                Object.values(data).reverse().forEach(item => {
+                    // Logic untuk warna dan tombol reply
+                    const isReply = item.sentiment === "REPLY";
+                    const themeColor = isReply ? "gray" : (item.sentiment.includes("BUY") ? "blue" : "red");
                     
                     const feedHtml = `
-                        <div class="bg-[#161a1e] p-4 rounded-2xl border-l-4 border-${themeColor}-500 shadow-lg mb-3 animate-fadeIn">
-                            <div class="flex justify-between items-center mb-2">
-                                <span class="text-[8px] font-black text-${themeColor}-400 uppercase tracking-widest">${item.user}</span>
-                                <span class="text-[7px] text-gray-600 font-bold">${item.timestamp}</span>
+                        <div class="bg-[#161a1e] p-4 rounded-[24px] border-l-4 border-${themeColor}-500 mb-3 shadow-xl transition-all">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-[8px] font-black text-${themeColor}-400 uppercase">${item.user}</span>
+                                <button onclick="prepareReply('${item.user}')" class="text-[7px] bg-blue-500/10 text-blue-400 px-2 py-1 rounded-lg font-bold uppercase">Reply</button>
                             </div>
+                            ${item.replyTo ? `<div class="bg-white/5 p-2 rounded-lg mb-2 text-[7px] italic text-gray-500">Replying to: @${item.replyTo}</div>` : ''}
                             <div class="flex items-center gap-2 mb-1">
-                                <span class="text-[10px] font-black text-white">${item.pair}</span>
-                                <span class="text-[8px] bg-${themeColor}-500/10 text-${themeColor}-500 px-2 py-0.5 rounded-md font-black italic">${item.sentiment}</span>
+                                <span class="text-[9px] font-bold text-white">${item.pair}</span>
                             </div>
-                            <p class="text-[9px] text-gray-400 italic leading-relaxed uppercase">${item.msg}</p>
+                            <p class="text-[10px] text-gray-300 leading-relaxed uppercase italic">${item.msg}</p>
+                            <p class="text-[6px] text-gray-700 mt-2 text-right">${item.timestamp}</p>
                         </div>
                     `;
                     container.insertAdjacentHTML('beforeend', feedHtml);
                 });
             }
-        } catch (e) {
-            console.log("Feed Error:", e);
-        }
+        } catch (e) { console.log("Feed Error:", e); }
     };
 
-    // Jalankan setiap 5 detik
     setInterval(refreshFeed, 5000);
-    refreshFeed(); // Jalankan sekali di awal
+    refreshFeed();
+}
+        // 1. VARIABEL GLOBAL UNTUK BALASAN
+let replyingToUser = null;
+
+// 2. FUNGSI AMBIL BERITA & SENTIMEN (NEWS)
+async function fetchMarketNews() {
+    const container = document.getElementById('user-pings');
+    try {
+        const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.forexlive.com/rss');
+        const data = await res.json();
+        if (data.items) {
+            data.items.slice(0, 2).forEach(item => {
+                const newsHtml = `
+                    <div class="bg-amber-500/5 p-4 rounded-2xl border-l-4 border-amber-500 mb-3 shadow-lg">
+                        <span class="text-[7px] font-black text-amber-500 uppercase tracking-widest">Global News Alert</span>
+                        <p class="text-[9px] text-white font-bold leading-tight mt-1">${item.title}</p>
+                    </div>`;
+                container.insertAdjacentHTML('afterbegin', newsHtml);
+            });
+        }
+    } catch (e) { console.log("News Error:", e); }
+}
+
+// 3. FUNGSI UNTUK MENYIAPKAN BALASAN (REPLY)
+function prepareReply(username) {
+    replyingToUser = username;
+    const msg = prompt("Balas analisa dari " + username + ":");
+    if(msg) sendPing(msg);
+}
+
+// 4. FUNGSI KIRIM ANALISA/BALASAN KE FIREBASE
+async function sendPing(manualMsg = null) {
+    const msgInput = manualMsg || prompt("Masukkan Analisa SMC Anda:");
+    if (!msgInput) return;
+
+    const pingData = {
+        user: currentUser.name,
+        pair: currentPair,
+        sentiment: replyingToUser ? "REPLY" : "ANALYSIS",
+        msg: msgInput,
+        replyTo: replyingToUser || null,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    };
+
+    await fetch(fbURL + "community_feed.json", { method: 'POST', body: JSON.stringify(pingData) });
+    replyingToUser = null; // Reset
 }
     </script>
 </body>
