@@ -2,580 +2,134 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AiSignalFx v12 - Institutional Platform</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AiSignalFx - Pro Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://s3.tradingview.com/tv.js"></script>
-    
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
-        
-        :root { 
-            --bg-dark: #0b0e11; 
-            --sidebar-bg: #161a1e; 
-            --accent-blue: #3b82f6; 
-            --accent-gold: #f59e0b;
-            --border-color: #2b3139; 
-        }
-
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background: var(--bg-dark); 
-            color: #ffffff; 
-            margin: 0; 
-            overflow: hidden; 
-        }
-
-        /* Sidebar & Nav */
-        #sidebar { background: var(--sidebar-bg); border-right: 1px solid var(--border-color); transition: 0.4s; z-index: 10000; }
-        .nav-item { color: #929aa5; cursor: pointer; border-radius: 12px; margin: 4px 12px; font-weight: 600; display: flex; align-items: center; gap: 12px; padding: 12px 16px; transition: 0.3s; }
-        .nav-active { background: var(--accent-blue) !important; color: white !important; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3); }
-
-        /* Sentiment Bar */
-        .sentiment-container { background: #161a1e; border-radius: 20px; padding: 15px; border: 1px solid var(--border-color); }
-        .sentiment-bar { height: 8px; border-radius: 10px; background: #333; overflow: hidden; display: flex; }
-        .bull-fill { background: #10b981; transition: 1s; }
-        .bear-fill { background: #ef4444; transition: 1s; }
-
-        /* Social Post Style */
-        .post-card { background: #161a1e; border-radius: 24px; padding: 16px; border: 1px solid var(--border-color); margin-bottom: 16px; }
-        .post-img { width: 100%; border-radius: 16px; margin-top: 10px; border: 1px solid #2b3139; }
-        .action-btn { font-[8px] font-black uppercase tracking-widest flex items-center gap-2 transition: 0.2s; }
-        .action-btn:hover { color: var(--accent-blue); }
-
-        /* Page Layout */
-        .page { display: none; height: 100vh; overflow-y: auto; padding-bottom: 120px; animation: fadeIn 0.4s ease; }
-        .page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        #tv-full-container { height: 500px; width: 100%; border-radius: 24px; overflow: hidden; border: 1px solid var(--border-color); }
-        
-        @media (max-width: 1024px) { 
-            #sidebar { position: fixed; left: -100%; height: 100vh; width: 280px; } 
-            #sidebar.open { left: 0 !important; } 
-        }
-        
-        .hidden { display: none !important; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="flex h-screen overflow-hidden text-gray-200">
-    <aside id="sidebar" class="w-64 flex flex-col shrink-0">
-        <div class="p-6 border-b border-gray-800/50">
+<body class="flex min-h-screen">
+
+    <aside id="sidebar" class="w-64 border-r border-white/5 flex flex-col shrink-0">
+        <div class="p-6 border-b border-white/5 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 p-[2px]">
-                    <div class="w-full h-full rounded-full bg-[#161a1e] flex items-center justify-center">
-                        <i class="fas fa-user-shield text-blue-500"></i>
-                    </div>
-                </div>
+                <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold">PS</div>
                 <div>
-                    <p id="display-name" class="text-[10px] font-black italic text-white uppercase tracking-tighter italic">TRADER PRO</p>
-                    <div id="status-badge" class="vip-status-gold mt-1 inline-block uppercase italic">Checking...</div>
+                    <p class="text-xs font-bold uppercase italic">Master Admin</p>
+                    <p class="text-[8px] text-blue-500 font-bold uppercase">Lifetime Access</p>
                 </div>
             </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-white"><i class="fas fa-times"></i></button>
         </div>
 
-        <nav class="flex-1 mt-4">
-            <div onclick="switchPage('page-dash', this)" class="nav-item nav-active"><i class="fas fa-th-large"></i><span>Dashboard</span></div>
-            <div onclick="checkVipAccess('page-autoscan', this)" class="nav-item"><i class="fas fa-search-dollar"></i><span>AutoScan VIP</span></div>
-            <div onclick="switchPage('page-visual', this)" class="nav-item"><i class="fas fa-eye text-cyan-400"></i><span>Visual AI Analyst</span></div>
-            
-            <div id="admin-nav" class="hidden">
-                <div class="px-7 mt-6 mb-2 text-[9px] font-black text-blue-500 uppercase tracking-widest italic">System Root</div>
-                <div onclick="switchPage('page-admin', this)" class="nav-item bg-blue-600/5 text-blue-400 border border-blue-500/10"><i class="fas fa-tools"></i><span>Master Console</span></div>
+        <nav class="flex-1 mt-6 px-4 space-y-2">
+            <div onclick="switchPage('page-dash')" class="menu-item">
+                <i class="fas fa-chart-line"></i> Dashboard
             </div>
-
-            <div class="px-7 mt-6 mb-2 text-[9px] font-black text-gray-600 uppercase tracking-[0.2em] italic">External</div>
-            <a href="https://wa.me/6282258464062" target="_blank" class="nav-item hover:text-green-500"><i class="fab fa-whatsapp"></i><span>WhatsApp VIP</span></a>
-            <div onclick="switchPage('page-vip', this)" class="nav-item text-orange-500 border border-orange-500/20 mx-3 bg-orange-500/5 mt-4"><i class="fas fa-crown"></i><span>Upgrade Lifetime</span></div>
+            <div onclick="switchPage('page-aiscan')" class="menu-item">
+                <i class="fas fa-microchip text-blue-400"></i> AI Brain Analysis
+            </div>
+            <div onclick="switchPage('page-autoscan')" class="menu-item">
+                <i class="fas fa-bolt text-amber-500"></i> AutoScan VIP
+            </div>
+            <div onclick="switchPage('page-learn')" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> SMC Strategy
+            </div>
+            <div onclick="switchPage('page-wallet')" class="menu-item">
+                <i class="fas fa-wallet text-green-500"></i> Subscription
+            </div>
+            <div onclick="switchPage('page-admin')" class="menu-item bg-blue-600/10 text-blue-400 border border-blue-500/20">
+                <i class="fas fa-user-shield"></i> Admin Master
+            </div>
         </nav>
-        
-        <div class="p-4 border-t border-gray-800/50">
-            <button onclick="logout()" class="w-full py-2 text-[9px] font-black text-gray-600 uppercase hover:text-red-500 italic">Terminate Session</button>
+
+        <div class="p-6 border-t border-white/5">
+            <a href="https://wa.me/6282258464062" target="_blank" class="flex items-center gap-2 text-[10px] text-gray-500 hover:text-green-500 font-bold uppercase italic">
+                <i class="fab fa-whatsapp"></i> WhatsApp VIP
+            </a>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col min-w-0 bg-[#0b0e11] relative">
-        <header class="lg:hidden p-4 bg-[#161a1e] border-b border-gray-800 flex justify-between items-center z-50">
-            <button onclick="toggleMenu()" class="text-blue-500"><i class="fas fa-bars-staggered"></i></button>
-            <span class="font-black italic text-blue-500 uppercase">AISIGNALFX</span>
-            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-black">PRO</div>
+    <main class="flex-1 flex flex-col relative overflow-y-auto h-screen">
+        <header class="p-5 border-b border-white/5 flex justify-between items-center bg-[#0b0e11] sticky top-0 z-50">
+            <button onclick="toggleSidebar()" class="lg:hidden text-blue-500 text-xl"><i class="fas fa-bars"></i></button>
+            <span class="font-black italic text-blue-500 uppercase">AiSignalFx</span>
+            <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
         </header>
 
-        <div id="page-dash" class="page active px-4 lg:px-8 py-6">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-                
-                <div class="lg:col-span-8 space-y-6">
-                    <div class="glass-panel rounded-[32px] p-2 shadow-2xl overflow-hidden border-blue-500/10">
-                        <div id="tv-full-container"></div>
+        <div id="page-dash" class="page active p-6">
+            <div id="tv-full-container" class="glass h-[450px] w-full mb-6 overflow-hidden"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass p-6">
+                    <h3 class="text-[10px] font-bold uppercase text-gray-500 mb-4 italic">Market Sentiment</h3>
+                    <div class="flex justify-between text-[10px] font-bold mb-2">
+                        <span class="text-green-500">BULL 65%</span>
+                        <span class="text-red-500">BEAR 35%</span>
                     </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="sentiment-container">
-                            <div class="flex justify-between items-center mb-4">
-                                <h3 class="text-[10px] font-black uppercase italic text-gray-400">Market Psychology</h3>
-                                <span class="text-[9px] font-bold text-blue-500 uppercase">Live Sentiment</span>
-                            </div>
-                            <div class="flex justify-between text-[10px] font-black mb-2 italic">
-                                <span class="text-emerald-500">BUYERS <span id="buy-pc">65</span>%</span>
-                                <span class="text-red-500">SELLERS <span id="sell-pc">35</span>%</span>
-                            </div>
-                            <div class="sentiment-bar">
-                                <div id="bar-bull" class="bull-fill" style="width: 65%"></div>
-                                <div id="bar-bear" class="bear-fill" style="width: 35%"></div>
-                            </div>
-                            <p class="text-[8px] text-gray-600 mt-4 uppercase font-bold text-center italic tracking-widest italic">Institutional Volume Analysis Active</p>
-                        </div>
-
-                        <div class="sentiment-container border-amber-500/20">
-                            <h3 class="text-[10px] font-black uppercase italic text-amber-500 mb-4 tracking-widest"><i class="fas fa-bullhorn mr-2"></i>High Impact News</h3>
-                            <div id="fundamental-feed" class="space-y-3">
-                                <div class="animate-pulse flex space-x-4">
-                                    <div class="flex-1 space-y-2 py-1 italic">
-                                        <div class="h-2 bg-gray-800 rounded w-3/4"></div>
-                                        <div class="h-2 bg-gray-800 rounded"></div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="w-full bg-red-500/20 h-2 rounded-full overflow-hidden flex">
+                        <div class="bg-green-500 h-full" style="width: 65%"></div>
                     </div>
                 </div>
-
-                <div class="lg:col-span-4 flex flex-col h-[85vh]">
-                    <div class="glass-panel rounded-[32px] p-6 flex flex-col h-full border-cyan-500/10 overflow-hidden">
-                        <div class="flex items-center justify-between mb-6">
-                            <h3 class="text-xs font-black uppercase italic tracking-tighter text-cyan-500"><i class="fas fa-share-nodes mr-2"></i>Community Feed</h3>
-                            <button onclick="openPostModal()" class="w-8 h-8 rounded-full bg-blue-600/20 text-blue-400 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-all"><i class="fas fa-plus"></i></button>
-                        </div>
-                        
-                        <div id="social-feed-container" class="flex-1 overflow-y-auto space-y-6 pr-2">
-                            </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-        <div id="page-autoscan" class="page px-4 lg:px-8 py-6">
-            <div id="autoscan-locked" class="max-w-xl mx-auto glass-panel rounded-[40px] p-12 text-center mt-10 hidden">
-                <i class="fas fa-lock text-5xl text-amber-500 mb-6"></i>
-                <h2 class="text-3xl font-black italic uppercase text-white mb-2 tracking-tighter">VIP Engine Locked</h2>
-                <p class="text-[10px] text-gray-500 font-bold uppercase mb-10 tracking-[0.2em] italic leading-relaxed">
-                    Fitur Searching, Sinyal Forex & Crypto (BTC/ETH) <br> hanya untuk Member Lifetime.
-                </p>
-                <button onclick="switchPage('page-vip')" class="w-full bg-gradient-to-r from-amber-600 to-yellow-500 py-4 rounded-2xl font-black uppercase text-xs text-black shadow-xl shadow-amber-600/20 active:scale-95 transition-all">Dapatkan Akses Lifetime</button>
-            </div>
-
-            <div id="autoscan-content" class="max-w-5xl mx-auto space-y-6 hidden">
-                <div class="glass-panel rounded-[32px] p-8 border-blue-500/10">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                        <div>
-                            <h2 class="text-2xl font-black uppercase italic tracking-tighter text-white">Market Searching</h2>
-                            <p class="text-[9px] font-bold text-gray-500 uppercase tracking-widest mt-1 italic">Scan Live Liquidity (Forex & Crypto)</p>
-                        </div>
-                        <div class="relative">
-                            <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-xs"></i>
-                            <input type="text" id="pair-search" onkeyup="filterPairs()" placeholder="Search Pair (e.g. BTC, XAU, EUR...)" class="bg-black/40 border border-gray-800 rounded-2xl py-3 pl-10 pr-4 text-xs text-white focus:border-blue-500 outline-none w-full md:w-64 italic">
-                        </div>
-                    </div>
-
-                    <div id="search-result-box" class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-                        <div class="bg-blue-600/5 p-4 rounded-3xl border border-blue-500/20">
-                            <p class="text-[8px] text-gray-500 uppercase mb-1 font-black">Selected Pair</p>
-                            <p id="search-pair-name" class="text-lg font-black text-white italic">---</p>
-                        </div>
-                        <div class="bg-black/40 p-4 rounded-3xl border border-gray-800">
-                            <p class="text-[8px] text-gray-500 uppercase mb-1 font-black italic text-red-500">Stop Loss</p>
-                            <p id="search-sl" class="text-lg font-black text-white">0.0000</p>
-                        </div>
-                        <div class="bg-black/40 p-4 rounded-3xl border border-gray-800">
-                            <p class="text-[8px] text-gray-500 uppercase mb-1 font-black italic text-green-500">Take Profit</p>
-                            <p id="search-tp" class="text-lg font-black text-white">0.0000</p>
-                        </div>
-                        <div class="bg-black/40 p-4 rounded-3xl border border-gray-800">
-                            <p class="text-[8px] text-gray-500 uppercase mb-1 font-black italic text-cyan-400">Structure</p>
-                            <p id="search-note" class="text-[10px] font-black uppercase text-gray-400 italic leading-tight">Waiting Selection</p>
-                        </div>
-                    </div>
-
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left border-separate border-spacing-y-3">
-                            <tbody id="scanner-body">
-                                </tbody>
-                        </table>
+                <div class="glass p-6">
+                    <h3 class="text-[10px] font-bold uppercase text-amber-500 mb-4 italic">Economic News</h3>
+                    <div class="text-[11px] text-gray-400 space-y-2">
+                        <p>• USD: FOMC Meeting Minutes - High Impact</p>
+                        <p>• Gold: Demand Spike at Support Zone</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="page-visual" class="page px-4 lg:px-8 py-6">
-            <div class="max-w-2xl mx-auto space-y-6">
-                <div class="glass-panel p-10 rounded-[40px] shadow-2xl text-center border-cyan-500/20">
-                    <div class="mb-8">
-                        <i class="fas fa-microchip text-5xl text-cyan-500 mb-6 shadow-[0_0_20px_rgba(6,182,212,0.3)]"></i>
-                        <h2 class="text-2xl font-black italic uppercase text-white mb-2">Visual AI Analyst</h2>
-                        <p class="text-[9px] text-gray-500 font-bold uppercase italic tracking-widest">SMC Pattern Recognition Engine</p>
-                    </div>
-                    
-                    <div onclick="document.getElementById('ai-upload').click()" class="border-2 border-dashed border-gray-800 rounded-[32px] p-12 bg-black/20 mb-8 cursor-pointer hover:border-cyan-500/50 transition-all group">
-                        <input type="file" id="ai-upload" class="hidden" onchange="previewImage(event)" accept="image/*">
-                        <div id="upload-placeholder">
-                            <i class="fas fa-file-invoice-dollar text-4xl text-gray-600 mb-4 group-hover:scale-110 transition-transform"></i>
-                            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Upload Screenshot Chart</p>
-                        </div>
-                        <img id="image-display" class="hidden w-full rounded-2xl shadow-lg border border-gray-700">
-                    </div>
+        <div id="page-aiscan" class="page p-6">
+            <div class="glass p-8 text-center border-dashed border-2 border-blue-500/30">
+                <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-4"></i>
+                <h2 class="text-xl font-black italic">UPLOAD CHART</h2>
+                <p class="text-xs text-gray-500 mb-6">AI akan mendeteksi BOS, CHoCH, dan Order Block secara otomatis.</p>
+                <input type="file" id="ai-upload" class="hidden">
+                <button onclick="document.getElementById('ai-upload').click()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-bold italic text-sm transition">
+                    PILIH GAMBAR
+                </button>
+            </div>
+        </div>
 
-                    <textarea id="ai-user-note" placeholder="Tambahkan instruksi (Contoh: Analisa area OB di M15 ini...)" class="w-full bg-black/40 border border-gray-800 rounded-2xl p-4 text-[11px] text-gray-300 italic focus:outline-none focus:border-cyan-500 h-24 mb-6 resize-none"></textarea>
-                    
-                    <button id="btn-visual-scan" onclick="processVisualAI()" class="w-full bg-cyan-600 py-4 rounded-2xl font-black uppercase text-xs text-white shadow-lg active:scale-95 transition-all italic">Start Deep Analysis</button>
+        <div id="page-autoscan" class="page p-6">
+            <div id="signal-display-area" class="hidden glass p-8 mb-6 border-blue-500/20 animate-pulse">
+                <h2 id="active-pair" class="text-3xl font-black italic mb-4">---</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-red-500/10 rounded-xl border border-red-500/20">
+                        <p class="text-[8px] text-red-500 font-bold uppercase">Stop Loss</p>
+                        <p id="sig-sl" class="text-xl font-bold">0.0000</p>
+                    </div>
+                    <div class="p-4 bg-green-500/10 rounded-xl border border-green-500/20">
+                        <p class="text-[8px] text-green-500 font-bold uppercase">Take Profit</p>
+                        <p id="sig-tp" class="text-xl font-bold">0.0000</p>
+                    </div>
                 </div>
+                <p id="sig-note" class="mt-4 text-xs italic text-gray-400"></p>
+            </div>
+            <div class="glass p-6">
+                <table class="w-full text-left">
+                    <tbody id="pair-list-body"></tbody>
+                </table>
+            </div>
+        </div>
 
-                <div id="visual-result-box" class="hidden glass-panel p-8 rounded-[40px] border-cyan-500/30 animate-fadeIn">
-                    <div class="flex items-center gap-4 mb-6">
-                        <div class="w-10 h-10 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-500 italic font-black text-xs">AI</div>
-                        <h3 class="text-xs font-black uppercase italic text-white tracking-widest">SMC Logic Analysis Result</h3>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-4 mb-6">
-                        <div class="p-4 bg-red-500/5 border border-red-500/20 rounded-2xl text-center">
-                            <p class="text-[8px] font-black text-red-500 uppercase italic">Suggested SL</p>
-                            <p id="v-sl" class="text-lg font-black text-white italic">---</p>
-                        </div>
-                        <div class="p-4 bg-green-500/5 border border-green-500/20 rounded-2xl text-center">
-                            <p class="text-[8px] font-black text-green-500 uppercase italic">Suggested TP</p>
-                            <p id="v-tp" class="text-lg font-black text-white italic">---</p>
-                        </div>
-                    </div>
-
-                    <div class="bg-black/40 p-5 rounded-2xl border border-gray-800">
-                        <p class="text-[8px] font-black text-cyan-500 uppercase mb-2 italic">Market Structure Breakdown:</p>
-                        <p id="v-note" class="text-[11px] leading-relaxed text-gray-300 font-medium italic"></p>
-                    </div>
+        <div id="page-wallet" class="page p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass p-6 border-l-4 border-green-500">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Status Akun</p>
+                    <h2 class="text-2xl font-black text-green-500 italic">VIP LIFETIME</h2>
+                </div>
+                <div class="glass p-6 border-l-4 border-blue-500">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Payment Method</p>
+                    <p class="text-xs mt-2 italic text-gray-400">SeaBank / Bank Neo / DANA</p>
                 </div>
             </div>
         </div>
-            <div id="post-modal" class="hidden fixed inset-0 z-[99999] bg-black/90 flex items-center justify-center p-4 backdrop-blur-md">
-        <div class="glass-panel w-full max-w-lg rounded-[40px] p-8 border-blue-500/20">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-black italic text-white uppercase tracking-tighter">Create New Analysis</h3>
-                <button onclick="closePostModal()" class="text-gray-500 hover:text-white"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="space-y-4">
-                <textarea id="post-text" placeholder="Tulis analisamu atau caption di sini..." class="w-full bg-black/40 border border-gray-800 rounded-2xl p-5 text-xs text-gray-300 italic h-32 resize-none outline-none focus:border-blue-500"></textarea>
-                <div onclick="document.getElementById('post-image-input').click()" class="border-2 border-dashed border-gray-800 rounded-2xl p-6 text-center cursor-pointer hover:bg-white/5 transition-all">
-                    <input type="file" id="post-image-input" class="hidden" accept="image/*" onchange="previewPostImage(this)">
-                    <div id="post-img-preview-box">
-                        <i class="fas fa-image text-gray-600 mb-2"></i>
-                        <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest">Klik untuk Upload Gambar/Chart</p>
-                    </div>
-                </div>
-                <button onclick="submitNewPost()" class="w-full bg-blue-600 py-4 rounded-2xl font-black uppercase text-[10px] text-white shadow-xl shadow-blue-900/40 active:scale-95 transition-all italic">Publish Analysis</button>
-            </div>
-        </div>
-    </div>
 
-    <div id="page-admin" class="page px-4 lg:px-8 py-6">
-        <div class="max-w-6xl mx-auto space-y-6">
-            <div class="flex items-center gap-4 mb-8">
-                <div class="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-700 rounded-2xl flex items-center justify-center shadow-2xl">
-                    <i class="fas fa-crown text-white text-xl"></i>
-                </div>
-                <div>
-                    <h2 class="text-3xl font-black italic uppercase text-white tracking-tighter">Master Control Console</h2>
-                    <p class="text-[9px] text-blue-500 font-black uppercase tracking-widest italic">Authorized Personal Only - AiSignalFx Root</p>
-                </div>
-            </div>
+    </main>
 
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="glass-panel p-8 rounded-[40px] border-blue-500/10">
-                    <h3 class="text-xs font-black uppercase text-blue-500 mb-6 italic tracking-widest border-b border-gray-800 pb-3">Global Signal Injector</h3>
-                    <div class="space-y-4">
-                        <input id="adm-pair" type="text" placeholder="Pair Name (e.g. XAUUSD)" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-white outline-none">
-                        <input id="adm-entry" type="text" placeholder="Entry Area" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-white outline-none">
-                        <div class="grid grid-cols-2 gap-4">
-                            <input id="adm-sl" type="text" placeholder="Stop Loss" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-red-500 outline-none">
-                            <input id="adm-tp" type="text" placeholder="Take Profit" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-green-500 outline-none">
-                        </div>
-                        <input id="adm-note" type="text" placeholder="Market Structure (BOS, OB...)" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs text-white outline-none">
-                        <button onclick="adminPushSignal()" class="w-full bg-blue-600 py-4 rounded-2xl font-black text-[10px] uppercase text-white shadow-xl">Broadcast Signal</button>
-                    </div>
-                </div>
-
-                <div class="lg:col-span-2 glass-panel p-8 rounded-[40px] border-gray-800 flex flex-col h-[500px]">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xs font-black uppercase text-gray-400 italic tracking-widest">Active Users Database</h3>
-                        <span class="text-[9px] bg-green-500/10 text-green-500 px-3 py-1 rounded-full font-black italic uppercase">Total: <span id="user-count">0</span></span>
-                    </div>
-                    <div class="overflow-y-auto flex-1 pr-2">
-                        <table class="w-full text-left text-[10px] font-bold border-separate border-spacing-y-2">
-                            <thead class="text-gray-500 uppercase">
-                                <tr>
-                                    <th class="p-3">User/Gmail</th>
-                                    <th class="p-3">Status</th>
-                                    <th class="p-3">Access</th>
-                                    <th class="p-3 text-right">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody id="admin-user-list">
-                                </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        const fbURL = "https://ai-signalfx-default-rtdb.asia-southeast1.firebasedatabase.app/";
-        let currentUser = null;
-
-        // SIMULASI DATABASE USER (Nanti tersimpan di Firebase)
-        const USER_DB = {
-            "admin@gmail.com": { pass: "admin123", name: "PSBETUNG", role: "ADMIN", status: "LIFETIME" },
-            "demo@gmail.com": { pass: "demo123", name: "TRADER GRATIS", role: "USER", status: "FREE" }
-        };
-
-        // LOGIN DENGAN VALIDASI GMAIL
-        function handleLogin() {
-            const email = document.getElementById('username').value.toLowerCase();
-            const pass = document.getElementById('password').value;
-            const err = document.getElementById('login-error');
-
-            if (USER_DB[email] && USER_DB[email].pass === pass) {
-                currentUser = USER_DB[email];
-                currentUser.email = email;
-                document.getElementById('login-screen').classList.add('hidden');
-                initApp();
-            } else {
-                err.classList.remove('hidden');
-                setTimeout(() => err.classList.add('hidden'), 3000);
-            }
-        }
-
-        // INIT SEMUA FITUR SETELAH LOGIN
-        function initApp() {
-            document.getElementById('display-name').innerText = currentUser.name;
-            document.getElementById('status-badge').innerText = currentUser.status + " MEMBER";
-            
-            if(currentUser.role === 'ADMIN') {
-                document.getElementById('admin-nav').classList.remove('hidden');
-                loadUserManagement();
-            }
-
-            initTradingView();
-            loadSocialFeed();
-            fetchFundamentalNews();
-            updateSentimentBar();
-            loadAutoScanPairs(); // Load daftar pair BTC, Forex, dll
-        }
-
-        // FUNGSI SOSIAL: LIKE & POSTINGAN
-        async function submitNewPost() {
-            const text = document.getElementById('post-text').value;
-            if(!text) return alert("Tulis sesuatu dulu, Bro!");
-
-            const newPost = {
-                user: currentUser.name,
-                email: currentUser.email,
-                msg: text,
-                img: "https://via.placeholder.com/600x300/161a1e/3b82f6?text=Analysis+Image", // Placeholder simulasi upload
-                likes: 0,
-                comments: [],
-                timestamp: new Date().toLocaleTimeString()
-            };
-
-            await fetch(fbURL + "social_posts.json", { method: 'POST', body: JSON.stringify(newPost) });
-            closePostModal();
-            loadSocialFeed();
-        }
-
-        async function loadSocialFeed() {
-            const container = document.getElementById('social-feed-container');
-            const res = await fetch(fbURL + "social_posts.json");
-            const data = await res.json();
-            if(!data) return;
-
-            container.innerHTML = "";
-            Object.keys(data).reverse().forEach(id => {
-                const post = data[id];
-                container.innerHTML += `
-                    <div class="post-card animate-fadeIn">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-[10px] font-black">AI</div>
-                            <div>
-                                <p class="text-[10px] font-black uppercase text-white">${post.user}</p>
-                                <p class="text-[8px] text-gray-600 font-bold uppercase italic">${post.timestamp}</p>
-                            </div>
-                        </div>
-                        <p class="text-[11px] text-gray-300 font-medium italic leading-relaxed">${post.msg}</p>
-                        <img src="${post.img}" class="post-img my-4">
-                        <div class="flex gap-6 border-t border-gray-800 pt-4">
-                            <button onclick="likePost('${id}')" class="action-btn text-gray-500"><i class="fas fa-heart"></i> ${post.likes || 0}</button>
-                            <button class="action-btn text-gray-500"><i class="fas fa-comment"></i> ${post.comments ? post.comments.length : 0}</button>
-                            <button class="action-btn text-gray-500 ml-auto"><i class="fas fa-share"></i></button>
-                        </div>
-                    </div>
-                `;
-            });
-        }
-
-        // ADMIN KONTROL USER
-        function loadUserManagement() {
-            const table = document.getElementById('admin-user-list');
-            table.innerHTML = "";
-            let count = 0;
-            for(let email in USER_DB) {
-                count++;
-                const u = USER_DB[email];
-                table.innerHTML += `
-                    <tr class="bg-black/20 rounded-xl overflow-hidden">
-                        <td class="p-3">
-                            <p class="text-white">${u.name}</p>
-                            <p class="text-gray-600 text-[8px]">${email}</p>
-                        </td>
-                        <td class="p-3"><span class="px-2 py-1 bg-blue-600/10 text-blue-500 rounded uppercase text-[8px]">${u.status}</span></td>
-                        <td class="p-3 text-gray-400">${u.role}</td>
-                        <td class="p-3 text-right">
-                            <button onclick="changeUserStatus('${email}')" class="text-amber-500 hover:text-white transition-all"><i class="fas fa-edit mr-2"></i>Edit</button>
-                        </td>
-                    </tr>
-                `;
-            }
-            document.getElementById('user-count').innerText = count;
-        }
-
-        // SISA JAVASCRIPT (Bagian terakhir) menyusul di Bagian 5
-    </script>
-        <script>
-        // 1. GATEKEEPING & NAVIGATION
-        function checkVipAccess(pageId, el) {
-            if (currentUser.status !== 'LIFETIME' && currentUser.role !== 'ADMIN') {
-                document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-                document.getElementById('autoscan-locked').classList.remove('hidden');
-                document.getElementById('page-autoscan').classList.add('active');
-            } else {
-                document.getElementById('autoscan-locked').classList.add('hidden');
-                document.getElementById('autoscan-content').classList.remove('hidden');
-                switchPage(pageId, el);
-            }
-        }
-
-        function switchPage(pageId, el) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
-            if(el) el.classList.add('nav-active');
-            if(window.innerWidth < 1024) toggleMenu();
-        }
-
-        // 2. DASHBOARD: TRADINGVIEW & SENTIMENT
-        function initTradingView() {
-            new TradingView.widget({
-                "autosize": true,
-                "symbol": "OANDA:XAUUSD",
-                "interval": "15", "timezone": "Asia/Jakarta", "theme": "dark", "style": "1", "locale": "id",
-                "container_id": "tv-full-container", "hide_top_toolbar": false, "backgroundColor": "#0b0e11"
-            });
-        }
-
-        function updateSentimentBar() {
-            const buy = Math.floor(Math.random() * (75 - 45 + 1)) + 45;
-            const sell = 100 - buy;
-            document.getElementById('buy-pc').innerText = buy;
-            document.getElementById('sell-pc').innerText = sell;
-            document.getElementById('bar-bull').style.width = buy + "%";
-            document.getElementById('bar-bear').style.width = sell + "%";
-        }
-
-        async function fetchFundamentalNews() {
-            const container = document.getElementById('fundamental-feed');
-            try {
-                const res = await fetch('https://api.rss2json.com/v1/api.json?rss_url=https://www.forexlive.com/feed');
-                const data = await res.json();
-                if(data.items) {
-                    container.innerHTML = "";
-                    data.items.slice(0, 3).forEach(item => {
-                        container.innerHTML += `
-                            <div class="p-3 bg-black/20 border-l-2 border-amber-500 rounded-r-xl">
-                                <p class="text-[10px] text-white font-bold italic leading-tight">${item.title}</p>
-                            </div>`;
-                    });
-                }
-            } catch(e) { container.innerHTML = "<p class='text-[8px]'>Failed to load news.</p>"; }
-        }
-
-        // 3. AUTOSCAN: SEARCH & SELECT PAIR
-        const PAIR_DATA = [
-            { name: "XAUUSD", sl: "2325.50", tp: "2380.00", note: "BOS Up Confirmed - Buy Area" },
-            { name: "BTCUSDT", sl: "62400", tp: "68500", note: "Order Block M15 Re-test" },
-            { name: "ETHUSDT", sl: "2950", tp: "3400", note: "Liquidity Sweep H1" },
-            { name: "EURUSD", sl: "1.0820", tp: "1.0950", note: "CHoCH Detected - Bullish" }
-        ];
-
-        function loadAutoScanPairs() {
-            const body = document.getElementById('scanner-body');
-            body.innerHTML = "";
-            PAIR_DATA.forEach(p => {
-                body.innerHTML += `
-                    <tr onclick="selectPair('${p.name}', '${p.sl}', '${p.tp}', '${p.note}')" class="bg-black/40 hover:bg-blue-600/10 cursor-pointer transition-all border border-gray-800">
-                        <td class="p-4 rounded-l-2xl font-black italic text-white">${p.name}</td>
-                        <td class="p-4 text-[10px] text-cyan-400 font-bold uppercase italic">Institutional Flow</td>
-                        <td class="p-4 rounded-r-2xl text-right text-gray-500"><i class="fas fa-chevron-right"></i></td>
-                    </tr>`;
-            });
-        }
-
-        function selectPair(name, sl, tp, note) {
-            document.getElementById('search-pair-name').innerText = name;
-            document.getElementById('search-sl').innerText = sl;
-            document.getElementById('search-tp').innerText = tp;
-            document.getElementById('search-note').innerText = note;
-        }
-
-        function filterPairs() {
-            const val = document.getElementById('pair-search').value.toUpperCase();
-            const rows = document.querySelectorAll('#scanner-body tr');
-            rows.forEach(r => {
-                r.style.display = r.innerText.toUpperCase().includes(val) ? "" : "none";
-            });
-        }
-
-        // 4. VISUAL AI LOGIC
-        function previewImage(event) {
-            const reader = new FileReader();
-            reader.onload = function() {
-                const img = document.getElementById('image-display');
-                img.src = reader.result;
-                img.classList.remove('hidden');
-                document.getElementById('upload-placeholder').classList.add('hidden');
-            }
-            reader.readAsDataURL(event.target.files[0]);
-        }
-
-        function processVisualAI() {
-            const btn = document.getElementById('btn-visual-scan');
-            const res = document.getElementById('visual-result-box');
-            btn.innerText = "ENGINE SCANNING...";
-            
-            setTimeout(() => {
-                btn.innerText = "ANALYSIS COMPLETE";
-                res.classList.remove('hidden');
-                document.getElementById('v-sl').innerText = "2315.40";
-                document.getElementById('v-tp').innerText = "2365.80";
-                document.getElementById('v-note').innerText = "Berdasarkan gambar, AI mendeteksi penumpukan volume di zona Demand. Telah terjadi BOS (Break of Structure) pada timeframe kecil. Entry disarankan saat harga melakukan retrace ke area Fair Value Gap (FVG).";
-                res.scrollIntoView({ behavior: 'smooth' });
-            }, 3000);
-        }
-
-        // 5. SOCIAL UTILS
-        function openPostModal() { document.getElementById('post-modal').classList.remove('hidden'); }
-        function closePostModal() { document.getElementById('post-modal').classList.add('hidden'); }
-        function logout() { location.reload(); }
-        
-        // Interval updates
-        setInterval(updateSentimentBar, 10000);
-        setInterval(loadSocialFeed, 30000);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
