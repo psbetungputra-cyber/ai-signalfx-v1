@@ -1,69 +1,48 @@
-// DATA MASTER SINYAL
-const PAIRS = [
-    { name: "XAUUSD", sl: "2315.40", tp: "2368.00", note: "Institutional Order Block H1" },
-    { name: "BTCUSDT", sl: "61200", tp: "68000", note: "Liquidity Sweep detected" },
-    { name: "EURUSD", sl: "1.0820", tp: "1.0950", note: "BOS Structure on M15" }
-];
-
-// FUNGSI NAVIGASI
-function toggleSidebar() { 
-    document.getElementById('sidebar').classList.toggle('active'); 
+body { 
+    background-color: #0b0e11; 
+    color: white; 
+    font-family: sans-serif; 
+    overflow-x: hidden; 
 }
 
-function switchPage(id) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(id).classList.add('active');
-    
-    // Auto-close sidebar on mobile after click
-    if(window.innerWidth < 1024) {
-        document.getElementById('sidebar').classList.remove('active');
-    }
+.glass { 
+    background: rgba(255, 255, 255, 0.03); 
+    backdrop-filter: blur(10px); 
+    border-radius: 24px; 
+    border: 1px solid rgba(255, 255, 255, 0.05); 
 }
 
-// INISIALISASI APLIKASI
-function initApp() {
-    // Memuat TradingView Widget
-    if (document.getElementById('tv-full-container')) {
-        new TradingView.widget({
-            "autosize": true,
-            "symbol": "OANDA:XAUUSD",
-            "interval": "15",
-            "container_id": "tv-full-container",
-            "theme": "dark",
-            "style": "1",
-            "locale": "id"
-        });
-    }
+.page { display: none; }
+.page.active { display: block; }
 
-    // Memuat Daftar Pair ke Tabel
-    const body = document.getElementById('pair-list-body');
-    if (body) {
-        body.innerHTML = ''; // Clear existing
-        PAIRS.forEach(p => {
-            body.innerHTML += `
-                <tr onclick="selectPair('${p.name}')" class="border-b border-white/5 hover:bg-white/5 cursor-pointer">
-                    <td class="p-4 font-bold italic">${p.name}</td>
-                    <td class="p-4 text-[10px] text-blue-500 font-bold uppercase">SMC Scan</td>
-                    <td class="p-4 text-right"><i class="fas fa-chevron-right"></i></td>
-                </tr>`;
-        });
-    }
+.menu-item {
+    padding: 1rem;
+    border-radius: 0.75rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-style: italic;
+    transition: 0.2s;
 }
 
-// FUNGSI MEMILIH PAIR
-function selectPair(name) {
-    const data = PAIRS.find(p => p.name === name);
-    const displayArea = document.getElementById('signal-display-area');
-    
-    if (data && displayArea) {
-        displayArea.classList.remove('hidden');
-        document.getElementById('active-pair').innerText = data.name;
-        document.getElementById('sig-sl').innerText = data.sl;
-        document.getElementById('sig-tp').innerText = data.tp;
-        document.getElementById('sig-note').innerText = data.note;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+.menu-item:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
-// Jalankan fungsi saat window selesai load
-window.onload = initApp;
+/* Responsif Mobile */
+@media (max-width: 1024px) {
+    #sidebar {
+        position: fixed;
+        left: -100%;
+        width: 280px;
+        height: 100vh;
+        z-index: 999;
+        transition: 0.3s ease-in-out;
+        background: #0f1216;
+    }
+    #sidebar.active { left: 0; }
+}
