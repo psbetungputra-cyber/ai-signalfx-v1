@@ -2,99 +2,133 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>AiSignalFx Pro - Terminal</title>
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AiSignalFx - Pro Terminal</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://s3.tradingview.com/tv.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="flex h-screen overflow-hidden">
+<body class="flex min-h-screen">
 
-    <div id="login-screen" class="fixed inset-0 z-[99999] flex items-center justify-center bg-[#0b0e11] p-6">
-        <div class="w-full max-w-md glass-panel p-10 rounded-[40px] shadow-2xl text-center">
-            <h1 class="text-3xl font-black text-blue-500 mb-2 italic uppercase">AiSignalFx <span class="text-white">v12</span></h1>
-            <p class="text-[9px] text-gray-500 uppercase font-black tracking-[0.3em] mb-10">Institutional SaaS Platform</p>
-            
-            <div class="space-y-4">
-                <input type="text" id="username" placeholder="Username Access" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs outline-none focus:border-blue-500 text-white">
-                <input type="password" id="password" placeholder="Secret Key" class="w-full bg-black/40 border border-gray-800 p-4 rounded-2xl text-xs outline-none focus:border-blue-500 text-white">
-                <button onclick="handleLogin()" class="w-full bg-blue-600 hover:bg-blue-700 py-4 rounded-2xl font-black text-[10px] uppercase text-white transition-all shadow-lg">Launch Terminal</button>
-                <p id="login-error" class="text-red-500 text-[9px] font-bold uppercase hidden">Access Denied!</p>
-            </div>
-        </div>
-    </div>
-
-    <aside id="sidebar" class="w-64 flex flex-col shrink-0">
-        <div class="p-6 border-b border-gray-800/50">
+    <aside id="sidebar" class="w-64 border-r border-white/5 flex flex-col shrink-0">
+        <div class="p-6 border-b border-white/5 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-blue-600 to-cyan-400 p-[2px]">
-                    <div class="w-full h-full rounded-full bg-[#161a1e] flex items-center justify-center">
-                        <i class="fas fa-user-shield text-blue-500"></i>
-                    </div>
-                </div>
+                <div class="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center font-bold">PS</div>
                 <div>
-                    <p id="display-name" class="text-[10px] font-black italic text-white uppercase">TRADER PRO</p>
-                    <div id="status-badge" class="vip-status-gold mt-1 inline-block">FREE MEMBER</div>
+                    <p class="text-xs font-bold uppercase italic">Master Admin</p>
+                    <p class="text-[8px] text-blue-500 font-bold uppercase">Lifetime Access</p>
                 </div>
             </div>
+            <button onclick="toggleSidebar()" class="lg:hidden text-white"><i class="fas fa-times"></i></button>
         </div>
 
-        <nav class="flex-1 mt-4">
-            <div onclick="switchPage('page-dash', this)" class="nav-item nav-active"><i class="fas fa-chart-line"></i><span>Dashboard</span></div>
-            <div onclick="switchPage('page-autoscan', this)" class="nav-item"><i class="fas fa-robot"></i><span>AI Autoscan VIP</span></div>
-            <div onclick="switchPage('page-visual', this)" class="nav-item"><i class="fas fa-eye text-cyan-400"></i><span>Visual AI Analyst</span></div>
-            
-            <div id="admin-nav" class="hidden">
-                <div onclick="switchPage('page-admin', this)" class="nav-item bg-blue-600/5 text-blue-400 border border-blue-500/10"><i class="fas fa-tools"></i><span>Master Console</span></div>
+        <nav class="flex-1 mt-6 px-4 space-y-2">
+            <div onclick="switchPage('page-dash')" class="menu-item">
+                <i class="fas fa-chart-line"></i> Dashboard
             </div>
-            
-            <div onclick="switchPage('page-vip', this)" class="nav-item text-orange-500 mt-4 border border-orange-500/20 mx-3 bg-orange-500/5"><i class="fas fa-crown"></i><span>Upgrade Lifetime</span></div>
+            <div onclick="switchPage('page-aiscan')" class="menu-item">
+                <i class="fas fa-microchip text-blue-400"></i> AI Brain Analysis
+            </div>
+            <div onclick="switchPage('page-autoscan')" class="menu-item">
+                <i class="fas fa-bolt text-amber-500"></i> AutoScan VIP
+            </div>
+            <div onclick="switchPage('page-learn')" class="menu-item">
+                <i class="fas fa-graduation-cap"></i> SMC Strategy
+            </div>
+            <div onclick="switchPage('page-wallet')" class="menu-item">
+                <i class="fas fa-wallet text-green-500"></i> Subscription
+            </div>
+            <div onclick="switchPage('page-admin')" class="menu-item bg-blue-600/10 text-blue-400 border border-blue-500/20">
+                <i class="fas fa-user-shield"></i> Admin Master
+            </div>
         </nav>
-        
-        <div class="p-4 border-t border-gray-800/50">
-            <button onclick="logout()" class="w-full py-2 text-[9px] font-black text-gray-600 uppercase hover:text-red-500 text-center">Log Out</button>
+
+        <div class="p-6 border-t border-white/5">
+            <a href="https://wa.me/6282258464062" target="_blank" class="flex items-center gap-2 text-[10px] text-gray-500 hover:text-green-500 font-bold uppercase italic">
+                <i class="fab fa-whatsapp"></i> WhatsApp VIP
+            </a>
         </div>
     </aside>
 
-    <main class="flex-1 flex flex-col min-w-0 bg-[#0b0e11] relative">
-        <header class="lg:hidden p-4 bg-[#161a1e] border-b border-gray-800 flex justify-between items-center z-50">
-            <button onclick="toggleMenu()" class="text-blue-500 text-xl relative z-[60]"><i class="fas fa-bars-staggered"></i></button>
-            <span class="font-black italic text-blue-500 uppercase">AISIGNALFX</span>
+    <main class="flex-1 flex flex-col relative overflow-y-auto h-screen">
+        <header class="p-5 border-b border-white/5 flex justify-between items-center bg-[#0b0e11] sticky top-0 z-50">
+            <button onclick="toggleSidebar()" class="lg:hidden text-blue-500 text-xl"><i class="fas fa-bars"></i></button>
+            <span class="font-black italic text-blue-500 uppercase">AiSignalFx</span>
             <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
         </header>
 
-        <div id="page-dash" class="page active px-4 lg:px-8 py-6">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div class="lg:col-span-2 space-y-6">
-                    <div class="glass-panel rounded-[32px] p-2 shadow-2xl relative overflow-hidden">
-                        <div id="tv-chart-box"></div>
+        <div id="page-dash" class="page active p-6">
+            <div id="tv-full-container" class="glass h-[450px] w-full mb-6 overflow-hidden"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass p-6">
+                    <h3 class="text-[10px] font-bold uppercase text-gray-500 mb-4 italic">Market Sentiment</h3>
+                    <div class="flex justify-between text-[10px] font-bold mb-2">
+                        <span class="text-green-500">BULL 65%</span>
+                        <span class="text-red-500">BEAR 35%</span>
                     </div>
-                    
-                    <div class="glass-panel rounded-[32px] p-6 shadow-2xl">
-                        <div class="flex justify-between items-center mb-6">
-                            <h2 id="web-signal" class="text-2xl font-black italic uppercase text-white">XAUUSD</h2>
-                            <div class="text-[10px] font-bold text-gray-500 uppercase tracking-widest">REALTIME SCANNING</div>
-                        </div>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <div class="bg-black/40 p-4 rounded-3xl border border-gray-800"><p class="text-[8px] text-gray-500 uppercase mb-1">Entry Area</p><p id="web-price" class="text-lg font-black text-blue-400">0.0000</p></div>
-                            <div class="bg-black/40 p-4 rounded-3xl border border-red-900/20 text-red-500"><p class="text-[8px] uppercase font-black mb-1">Stop Loss</p><p id="web-sl" class="text-lg font-black">0.0000</p></div>
-                            <div class="bg-black/40 p-4 rounded-3xl border border-green-900/20 text-green-500"><p class="text-[8px] uppercase font-black mb-1">Take Profit</p><p id="web-tp" class="text-lg font-black">0.0000</p></div>
-                            <div class="bg-black/40 p-4 rounded-3xl border border-cyan-900/20 text-cyan-400"><p class="text-[8px] uppercase font-black mb-1">SMC Zone</p><p id="web-zone" class="text-lg font-black italic uppercase text-center">Waiting</p></div>
-                        </div>
+                    <div class="w-full bg-red-500/20 h-2 rounded-full overflow-hidden flex">
+                        <div class="bg-green-500 h-full" style="width: 65%"></div>
                     </div>
                 </div>
-
-                <div class="glass-panel rounded-[32px] p-6 h-[600px] flex flex-col overflow-hidden">
-                    <h3 class="text-xs font-black uppercase italic text-cyan-500 mb-4"><i class="fas fa-users-viewfinder mr-2"></i>Community Feed</h3>
-                    <div id="user-pings" class="flex-1 overflow-y-auto space-y-4 pr-2"></div>
-                    <button onclick="sendPing()" class="mt-4 w-full bg-blue-600/20 text-blue-400 py-3 rounded-xl text-[9px] font-black uppercase border border-blue-500/30">Post Analysis</button>
+                <div class="glass p-6">
+                    <h3 class="text-[10px] font-bold uppercase text-amber-500 mb-4 italic">Economic News</h3>
+                    <div class="text-[11px] text-gray-400 space-y-2">
+                        <p>• USD: FOMC Meeting Minutes - High Impact</p>
+                        <p>• Gold: Demand Spike at Support Zone</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        </main>
+        <div id="page-aiscan" class="page p-6">
+            <div class="glass p-8 text-center border-dashed border-2 border-blue-500/30">
+                <i class="fas fa-cloud-upload-alt text-4xl text-blue-500 mb-4"></i>
+                <h2 class="text-xl font-black italic">UPLOAD CHART</h2>
+                <p class="text-xs text-gray-500 mb-6">AI akan mendeteksi BOS, CHoCH, dan Order Block secara otomatis.</p>
+                <input type="file" id="ai-upload" class="hidden">
+                <button onclick="document.getElementById('ai-upload').click()" class="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-xl font-bold italic text-sm transition">
+                    PILIH GAMBAR
+                </button>
+            </div>
+        </div>
+
+        <div id="page-autoscan" class="page p-6">
+            <div id="signal-display-area" class="hidden glass p-8 mb-6 border-blue-500/20 animate-pulse">
+                <h2 id="active-pair" class="text-3xl font-black italic mb-4">---</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-red-500/10 rounded-xl border border-red-500/20">
+                        <p class="text-[8px] text-red-500 font-bold uppercase">Stop Loss</p>
+                        <p id="sig-sl" class="text-xl font-bold">0.0000</p>
+                    </div>
+                    <div class="p-4 bg-green-500/10 rounded-xl border border-green-500/20">
+                        <p class="text-[8px] text-green-500 font-bold uppercase">Take Profit</p>
+                        <p id="sig-tp" class="text-xl font-bold">0.0000</p>
+                    </div>
+                </div>
+                <p id="sig-note" class="mt-4 text-xs italic text-gray-400"></p>
+            </div>
+            <div class="glass p-6">
+                <table class="w-full text-left">
+                    <tbody id="pair-list-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="page-wallet" class="page p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass p-6 border-l-4 border-green-500">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Status Akun</p>
+                    <h2 class="text-2xl font-black text-green-500 italic">VIP LIFETIME</h2>
+                </div>
+                <div class="glass p-6 border-l-4 border-blue-500">
+                    <p class="text-[10px] font-bold text-gray-500 uppercase">Payment Method</p>
+                    <p class="text-xs mt-2 italic text-gray-400">SeaBank / Bank Neo / DANA</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
 
     <script src="script.js"></script>
 </body>
