@@ -209,29 +209,42 @@
     }
 
     function switchPage(pageId, element) {
-    // 1. Matikan semua menu yang aktif
+    // 1. Hapus class aktif dari semua menu sidebar
     document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('nav-active'));
-    // 2. Aktifkan menu yang diklik
+    
+    // 2. Tambahkan class aktif ke menu yang baru saja diklik
     element.classList.add('nav-active');
 
-    // 3. Sembunyikan semua halaman
+    // 3. Sembunyikan SEMUA halaman konten
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    // 4. Munculkan halaman yang dipilih
+    
+    // 4. Tampilkan halaman yang ID-nya sesuai dengan yang diklik
     const targetPage = document.getElementById(pageId);
     if(targetPage) {
         targetPage.classList.add('active');
     }
 
-    // 5. Update Judul di Header
+    // 5. Update Judul di Header atas agar sesuai menu
     const titles = {
         'page-dash': 'Institutional Dashboard',
         'page-analysis': 'AI Visual Analyst',
         'page-autoscan': 'AI AutoScan VIP Engine',
         'page-smc': 'SMC Masterclass Playbook',
         'page-journal': 'Trading Journal Log',
-        'page-risk': 'Risk Management'
+        'page-risk': 'Risk Management Calculator'
     };
-    document.getElementById('page-title').innerText = titles[pageId] || 'Terminal';
+    
+    const headerTitle = document.getElementById('page-title');
+    if(headerTitle) {
+        headerTitle.innerText = titles[pageId] || 'Terminal Pro';
+    }
+
+    // 6. Tutup sidebar otomatis jika di HP (Mobile)
+    if(window.innerWidth < 1024) {
+        document.getElementById('sidebar').classList.remove('open');
+    }
+    
+    console.log("Navigated to: " + pageId);
 }
     }
 </script>
