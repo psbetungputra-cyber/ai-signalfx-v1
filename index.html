@@ -221,6 +221,161 @@
 </script>
 
         <div id="main-content-target" class="flex-1 relative overflow-hidden">
+            <div class="flex-1 flex flex-col h-screen overflow-hidden">
+    
+    <header class="h-16 border-b border-[#2b3139] bg-[#0b0e11]/80 backdrop-blur-md flex items-center justify-between px-6 z-40">
+        <div class="flex items-center gap-4">
+            <button onclick="toggleMenu()" class="lg:hidden text-gray-400 hover:text-white">
+                <i class="fas fa-bars-staggered text-xl"></i>
+            </button>
+            <div class="hidden lg:block">
+                <h2 id="page-title" class="text-xs font-800 uppercase tracking-[3px] text-blue-500">Institutional Dashboard</h2>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-6">
+            <div class="hidden md:flex flex-col items-end">
+                <p id="digital-clock" class="text-sm font-800 tracking-tighter">00:00:00</p>
+                <p class="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Global Market Time</p>
+            </div>
+            
+            <div class="flex items-center gap-3 bg-[#1e2329] px-4 py-2 rounded-xl border border-[#2b3139]">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="text-[10px] font-black text-gray-300 uppercase tracking-widest">Firebase Live</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="h-10 bg-[#161a1e] border-b border-[#2b3139] flex items-center overflow-hidden whitespace-nowrap">
+        <div class="ticker-wrapper flex gap-10 items-center animate-ticker">
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold text-gray-500">XAUUSD</span><span class="text-[10px] font-800 text-green-400">2345.12</span><i class="fas fa-caret-up text-green-500 text-[8px]"></i></div>
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold text-gray-500">BTCUSDT</span><span class="text-[10px] font-800 text-red-400">67120.50</span><i class="fas fa-caret-down text-red-500 text-[8px]"></i></div>
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold text-gray-500">EURUSD</span><span class="text-[10px] font-800 text-green-400">1.08542</span><i class="fas fa-caret-up text-green-500 text-[8px]"></i></div>
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold text-gray-500">GBPUSD</span><span class="text-[10px] font-800 text-green-400">1.26431</span><i class="fas fa-caret-up text-green-500 text-[8px]"></i></div>
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold text-gray-500">USDJPY</span><span class="text-[10px] font-800 text-red-400">156.23</span><i class="fas fa-caret-down text-red-500 text-[8px]"></i></div>
+            <div class="flex items-center gap-2"><span class="text-[10px] font-bold text-gray-500">XAUUSD</span><span class="text-[10px] font-800 text-green-400">2345.12</span></div>
+        </div>
+    </div>
+
+    <main id="main-pages" class="flex-1 overflow-y-auto bg-[#0b0e11] p-4 lg:p-6">
+        
+        <div id="page-dash" class="page active">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="glass-card h-[450px] relative">
+                        <div class="absolute top-4 left-4 z-10 flex gap-2">
+                            <span class="bg-blue-600/20 text-blue-500 text-[9px] font-black px-3 py-1 rounded-lg border border-blue-600/30 uppercase tracking-widest">Live Terminal</span>
+                        </div>
+                        <div id="tv-chart-box" class="w-full h-full"></div>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <div class="glass-card p-5">
+                        <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[3px] mb-4">Market Sentiment</h3>
+                        <div class="space-y-4">
+                            <div class="flex justify-between text-[11px] font-800 mb-1">
+                                <span class="text-green-500 uppercase">Bullish</span>
+                                <span class="text-red-500 uppercase">Bearish</span>
+                            </div>
+                            <div class="h-3 w-full bg-red-500 rounded-full overflow-hidden flex">
+                                <div class="h-full bg-green-500" style="width: 72%"></div>
+                            </div>
+                            <p class="text-[9px] text-center text-gray-500 italic">Data source: OANDA Institutional Analysis</p>
+                        </div>
+                    </div>
+
+                    <div id="news-feed" class="glass-card p-5">
+                        <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[3px] mb-4">High Impact News</h3>
+                        <div class="space-y-3" id="market-news-feed">
+                            <div class="p-3 bg-blue-600/5 border border-blue-600/10 rounded-xl">
+                                <p class="text-[10px] font-800 text-white leading-tight">US CPI Data Release (Expect Volatility)</p>
+                                <p class="text-[9px] text-gray-500 mt-1 uppercase">Today • 19:30 WIB</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="page-smc" class="page"></div>
+        <div id="page-journal" class="page"></div>
+        <div id="page-risk" class="page"></div>
+        <div id="page-analysis" class="page"></div>
+
+    </main>
+</div>
+
+<style>
+    @keyframes ticker {
+        0% { transform: translateX(0); }
+        100% { transform: translateX(-50%); }
+    }
+    .animate-ticker {
+        display: flex;
+        animation: ticker 30s linear infinite;
+    }
+    .animate-ticker:hover { animation-play-state: paused; }
+</style>
+
+<script>
+    // Live Clock Function
+    function updateClock() {
+        const now = new Date();
+        document.getElementById('digital-clock').innerText = now.toLocaleTimeString('en-GB', { hour12: false });
+    }
+    setInterval(updateClock, 1000);
+
+    // TradingView Initialization
+    function initTV() {
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "OANDA:XAUUSD",
+            "interval": "15",
+            "timezone": "Etc/UTC",
+            "theme": "dark",
+            "style": "1",
+            "locale": "en",
+            "container_id": "tv-chart-box",
+            "hide_top_toolbar": false,
+            "allow_symbol_change": true,
+            "save_image": false,
+            "backgroundColor": "rgba(11, 14, 17, 1)",
+            "gridColor": "rgba(43, 49, 57, 0.1)"
+        });
+    }
+
+    // Override switchPage dari Modul 02 untuk menangani tampilan halaman
+    const originalSwitchPage = switchPage;
+    switchPage = function(pageId, element) {
+        // Panggil logika lama (update nav)
+        document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('nav-active'));
+        element.classList.add('nav-active');
+
+        // Logika Baru: Ganti Page
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        const targetPage = document.getElementById(pageId);
+        if(targetPage) targetPage.classList.add('active');
+
+        // Update Judul Header
+        const titles = {
+            'page-dash': 'Institutional Dashboard',
+            'page-smc': 'SMC Masterclass Playbook',
+            'page-journal': 'Professional Trading Journal',
+            'page-risk': 'Risk Management Calculator',
+            'page-analysis': 'AI Visual Market Analyst'
+        };
+        document.getElementById('page-title').innerText = titles[pageId] || 'Terminal';
+
+        // Khusus Chart: Re-init jika masuk dashboard
+        if(pageId === 'page-dash') setTimeout(initTV, 100);
+    }
+
+    function toggleMenu() {
+        document.getElementById('sidebar').classList.toggle('open');
+    }
+</script>
+
              </div>
     </div>
 
