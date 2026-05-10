@@ -1,83 +1,69 @@
-const fbURL = "https://ai-signalfx-default-rtdb.asia-southeast1.firebasedatabase.app/";
-let currentUser = null;
-let currentPair = "XAUUSD";
+// DATA MASTER SINYAL
+const PAIRS = [
+    { name: "XAUUSD", sl: "2315.40", tp: "2368.00", note: "Institutional Order Block H1" },
+    { name: "BTCUSDT", sl: "61200", tp: "68000", note: "Liquidity Sweep detected" },
+    { name: "EURUSD", sl: "1.0820", tp: "1.0950", note: "BOS Structure on M15" }
+];
 
-const ACCESS_KEYS = {
-    "psbetung": { pass: "admin123", role: "ADMIN", status: "VIP", name: "PSBETUNG" },
-    "trader": { pass: "guest123", role: "USER", status: "FREE", name: "GUEST" }
-};
+// FUNGSI NAVIGASI
+function toggleSidebar() { 
+    document.getElementById('sidebar').classList.toggle('active'); 
+}
 
-function handleLogin() {
-    const u = document.getElementById('username').value.toLowerCase();
-    const p = document.getElementById('password').value;
-    if (ACCESS_KEYS[u] && ACCESS_KEYS[u].pass === p) {
-        currentUser = ACCESS_KEYS[u];
-        document.getElementById('login-screen').classList.add('hidden');
-        initApp();
-    } else {
-        document.getElementById('login-error').classList.remove('hidden');
+function switchPage(id) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    
+    // Auto-close sidebar on mobile after click
+    if(window.innerWidth < 1024) {
+        document.getElementById('sidebar').classList.remove('active');
     }
 }
 
+// INISIALISASI APLIKASI
 function initApp() {
-    document.getElementById('display-name').innerText = currentUser.name;
-    document.getElementById('status-badge').innerText = currentUser.status + " MEMBER";
-    if(currentUser.role === 'ADMIN') document.getElementById('admin-nav').classList.remove('hidden');
-    initTV("OANDA:XAUUSD");
-    startLiveSync();
+    // Memuat TradingView Widget
+    if (document.getElementById('tv-full-container')) {
+        new TradingView.widget({
+            "autosize": true,
+            "symbol": "OANDA:XAUUSD",
+            "interval": "15",
+            "container_id": "tv-full-container",
+            "theme": "dark",
+            "style": "1",
+            "locale": "id"
+        });
+    }
+
+    // Memuat Daftar Pair ke Tabel
+    const body = document.getElementById('pair-list-body');
+    if (body) {
+        body.innerHTML = ''; // Clear existing
+        PAIRS.forEach(p => {
+            body.innerHTML += `
+                <tr onclick="selectPair('${p.name}')" class="border-b border-white/5 hover:bg-white/5 cursor-pointer">
+                    <td class="p-4 font-bold italic">${p.name}</td>
+                    <td class="p-4 text-[10px] text-blue-500 font-bold uppercase">SMC Scan</td>
+                    <td class="p-4 text-right"><i class="fas fa-chevron-right"></i></td>
+                </tr>`;
+        });
+    }
 }
 
-function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
-
-function switchPage(pageId, el) {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById(pageId).classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
-    if(el) el.classList.add('nav-active');
-    if(window.innerWidth < 1024) toggleMenu();
+// FUNGSI MEMILIH PAIR
+function selectPair(name) {
+    const data = PAIRS.find(p => p.name === name);
+    const displayArea = document.getElementById('signal-display-area');
+    
+    if (data && displayArea) {
+        displayArea.classList.remove('hidden');
+        document.getElementById('active-pair').innerText = data.name;
+        document.getElementById('sig-sl').innerText = data.sl;
+        document.getElementById('sig-tp').innerText = data.tp;
+        document.getElementById('sig-note').innerText = data.note;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 }
 
-function initTV(symbol) {
-    new TradingView.widget({
-        "autosize": true,
-        "symbol": symbol,
-        "interval": "15",
-        "theme": "dark",
-        "container_id": "tv-chart-box"
-    });
-}
-
-function startLiveSync() {
-    setInterval(async () => {
-        const res = await fetch(fbURL + "signal.json");
-        const data = await res.json();
-        if(data) {
-            document.getElementById('web-price').innerText = data.entry || '0.00';
-            document.getElementById('web-sl').innerText = data.sl || '0.00';
-            document.getElementById('web-tp').innerText = data.tp || '0.00';
-            document.getElementById('web-zone').innerText = data.note || 'WAITING';
-        }
-    }, 3000);
-    startCommunityFeed();
-}
-
-function startCommunityFeed() {
-    const container = document.getElementById('user-pings');
-    setInterval(async () => {
-        const res = await fetch(fbURL + 'community_feed.json?limitToLast=10');
-        const data = await res.json();
-        if (data) {
-            container.innerHTML = ""; 
-            Object.values(data).reverse().forEach(item => {
-                container.innerHTML += `
-                    <div class="bg-[#161a1e] p-4 rounded-[24px] border-l-4 border-blue-500 shadow-xl">
-                        <span class="text-[8px] font-black text-blue-400 uppercase">${item.user}</span>
-                        <p class="text-[10px] text-gray-300 italic mt-1 uppercase">${item.msg}</p>
-                    </div>`;
-            });
-        }
-    }, 5000);
-}
-
-function logout() { location.reload(); }
-
+// Jalankan fungsi saat window selesai load
+window.onload = initApp;
