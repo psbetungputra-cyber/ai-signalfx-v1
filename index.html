@@ -117,6 +117,16 @@ background:#2b3139;
 }
 </style>
 </head>
+  <header class="h-16 border-b border-[#2b3139] bg-[#0b0e11] flex items-center justify-between px-6">
+    <div class="flex items-center gap-4">
+        <button onclick="toggleSidebar()" class="lg:hidden text-gray-400">
+            <i class="fas fa-bars text-xl"></i>
+        </button>
+        <h1 id="page-title" class="uppercase tracking-[4px] text-[10px] md:text-xs font-black text-blue-500">
+            Institutional Dashboard
+        </h1>
+    </div>
+    </header>
 
 <body>
 
@@ -205,6 +215,11 @@ Main Terminal
 <div onclick="switchPage('smc', this)" class="nav-item">
 <i class="fas fa-graduation-cap text-amber-400"></i>
 <span>SMC Masterclass</span>
+</div>
+  
+<div onclick="switchPage('admin', this)" class="nav-item border border-yellow-500/20 bg-yellow-500/5">
+<i class="fas fa-user-shield text-yellow-500"></i>
+<span>Admin Control</span>
 </div>
 
 </nav>
@@ -474,7 +489,31 @@ Belajar smart money mengambil liquidity market.
 </div>
 
 </div>
-
+<div id="admin" class="page">
+    <div class="glass p-8 max-w-2xl">
+        <h2 class="text-2xl font-black text-yellow-500 mb-6">Master Control</h2>
+        <div class="space-y-6">
+            <div>
+                <label class="text-[10px] uppercase font-bold text-gray-500">Bot Status</label>
+                <div class="flex gap-4 mt-2">
+                    <button class="px-6 py-2 rounded-xl bg-green-500 font-bold text-xs">START BOT</button>
+                    <button class="px-6 py-2 rounded-xl bg-red-500/20 text-red-500 font-bold text-xs">STOP BOT</button>
+                </div>
+            </div>
+            <div>
+                <label class="text-[10px] uppercase font-bold text-gray-500">Broadcast Sinyal</label>
+                <div class="flex gap-2 mt-2">
+                    <button onclick="sendToTelegram()" class="flex-1 py-4 rounded-2xl bg-[#229ED9] font-black text-xs">
+                        <i class="fab fa-telegram-plane mr-2"></i> TELEGRAM
+                    </button>
+                    <button onclick="sendToWA()" class="flex-1 py-4 rounded-2xl bg-[#25D366] font-black text-xs">
+                        <i class="fab fa-whatsapp mr-2"></i> WHATSAPP
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 </main>
 
 </div>
@@ -642,6 +681,34 @@ clearInterval(interval);
 }
 
 });
+  // Fungsi Kirim ke Telegram
+function sendToTelegram() {
+    const token = "TOKEN_BOT_MU"; // Ambil dari BotFather
+    const chatId = "ID_CHAT_MU";
+    const pesan = "🚀 *AI SIGNALFX VIP*\n\nPair: XAUUSD\nType: STRONG BUY\nEntry: 2345.00";
+    
+    fetch(`https://api.telegram.org/bot${token}/sendMessage?chat_id=${chatId}&text=${encodeURIComponent(pesan)}&parse_mode=Markdown`)
+    .then(() => alert("Sinyal terkirim ke Telegram!"))
+    .catch(() => alert("Gagal kirim Telegram"));
+}
+
+// Fungsi Kirim ke WhatsApp (Direct Link)
+function sendToWA() {
+    const phone = "628xxxxxxxx"; // Nomor WA kamu
+    const text = "Sinyal Terdeteksi: BUY XAUUSD @ 2345.00";
+    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(text)}`, '_blank');
+}
+
+// Fungsi Buka Tutup Sidebar di HP
+function toggleSidebar() {
+    const aside = document.querySelector('aside');
+    aside.classList.toggle('hidden');
+    aside.classList.toggle('fixed');
+    aside.classList.toggle('inset-y-0');
+    aside.classList.toggle('left-0');
+    aside.classList.toggle('z-50');
+    aside.classList.toggle('w-full');
+}
 
 </script>
 
