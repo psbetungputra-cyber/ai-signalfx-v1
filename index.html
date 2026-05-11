@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
+<header class="h-16 border-b border-[#2b3139] bg-[#0b0e11] flex items-center justify-between px-6">
+  <div class="flex items-center gap-4">
+      <button onclick="toggleSidebar()" class="lg:hidden text-gray-400">
+          <i class="fas fa-bars text-xl"></i>
+      </button>
+      <h1 id="page-title" class="uppercase tracking-[4px] text-[10px] md:text-xs font-black text-blue-500">
+          Institutional Dashboard
+      </h1>
+  </div>
+</header>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>AiSignalFx Pro v13 Institutional</title>
@@ -8,6 +18,8 @@
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <script src="https://s3.tradingview.com/tv.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
@@ -117,17 +129,25 @@ background:#2b3139;
 }
 </style>
 </head>
-  <header class="h-16 border-b border-[#2b3139] bg-[#0b0e11] flex items-center justify-between px-6">
-    <div class="flex items-center gap-4">
-        <button onclick="toggleSidebar()" class="lg:hidden text-gray-400">
-            <i class="fas fa-bars text-xl"></i>
-        </button>
-        <h1 id="page-title" class="uppercase tracking-[4px] text-[10px] md:text-xs font-black text-blue-500">
-            Institutional Dashboard
-        </h1>
-    </div>
-    </header>
+<script>
+  // Konfigurasi ini harus sama dengan yang di Termux
+  const firebaseConfig = {
+    databaseURL: "https://ai-signalfx-v1-default-rtdb.asia-southeast1.firebasedatabase.app/"
+  };
 
+  // Inisialisasi Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+
+  // Ambil data terbaru otomatis saat Termux kirim sinyal
+  database.ref('signals').limitToLast(1).on('child_added', (snapshot) => {
+      const data = snapshot.val();
+      console.log("Sinyal Baru Masuk:", data);
+      
+      // Di sini kita masukkan logikanya agar muncul di menu AutoScan VIP kamu
+      // Sesuai dengan ID yang kamu buat di HTML tadi
+  });
+</script>
 <body>
 
 <!-- LOGIN -->
