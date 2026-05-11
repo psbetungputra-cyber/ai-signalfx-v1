@@ -1,2752 +1,649 @@
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-
-    <title>AiSignalFx Pro X — Institutional Terminal</title>
-
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-    <!-- TradingView -->
-    <script src="https://s3.tradingview.com/tv.js"></script>
-
-    <!-- Font -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-
-    <style>
-        :root {
-
-            --bg-primary: #05070a;
-            --bg-secondary: #0b0f14;
-            --bg-card: rgba(18, 24, 32, 0.85);
-
-            --border: rgba(255, 255, 255, 0.06);
-
-            --blue: #3b82f6;
-            --blue-soft: rgba(59, 130, 246, 0.15);
-
-            --gold: #f59e0b;
-            --green: #10b981;
-            --red: #ef4444;
-
-            --text: #f3f4f6;
-            --text-soft: #94a3b8;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background:
-                radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 20%),
-                radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.08), transparent 20%),
-                var(--bg-primary);
-
-            color: var(--text);
-            overflow: hidden;
-            height: 100vh;
-        }
-
-        /* Scrollbar */
-
-        ::-webkit-scrollbar {
-            width: 4px;
-            height: 4px;
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.12);
-            border-radius: 999px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-
-        /* Reusable */
-
-        .glass {
-            background: var(--bg-card);
-            border: 1px solid var(--border);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-        }
-
-        .card {
-            background: linear-gradient(180deg,
-                    rgba(255, 255, 255, 0.03),
-                    rgba(255, 255, 255, 0.015));
-            border: 1px solid var(--border);
-            border-radius: 28px;
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-        }
-
-        .title-gradient {
-            background: linear-gradient(90deg, #3b82f6, #60a5fa, #ffffff);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .border-soft {
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .shadow-blue {
-            box-shadow: 0 0 30px rgba(59, 130, 246, 0.15);
-        }
-
-        .shadow-gold {
-            box-shadow: 0 0 30px rgba(245, 158, 11, 0.12);
-        }
-
-        /* Login Screen */
-
-        #login-screen {
-            position: fixed;
-            inset: 0;
-            z-index: 9999;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            overflow: hidden;
-        }
-
-        .login-grid {
-            position: absolute;
-            inset: 0;
-
-            background-image:
-                linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-
-            background-size: 40px 40px;
-
-            mask-image: radial-gradient(circle at center, black 20%, transparent 90%);
-        }
-
-        .login-card {
-            width: 100%;
-            max-width: 460px;
-
-            padding: 38px;
-            border-radius: 40px;
-
-            position: relative;
-            overflow: hidden;
-        }
-
-        .login-card::before {
-
-            content: "";
-
-            position: absolute;
-            width: 240px;
-            height: 240px;
-
-            background: rgba(59, 130, 246, 0.12);
-
-            border-radius: 999px;
-
-            top: -120px;
-            right: -100px;
-
-            filter: blur(20px);
-        }
-
-        .input-pro {
-            width: 100%;
-
-            background: rgba(255, 255, 255, 0.03);
-
-            border: 1px solid rgba(255, 255, 255, 0.06);
-
-            color: white;
-
-            padding: 16px 18px;
-
-            border-radius: 20px;
-
-            font-size: 14px;
-            font-weight: 600;
-
-            transition: 0.25s ease;
-        }
-
-        .input-pro:focus {
-
-            outline: none;
-
-            border-color: rgba(59, 130, 246, 0.6);
-
-            background: rgba(255, 255, 255, 0.05);
-
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.12);
-        }
-
-        .btn-primary {
-
-            width: 100%;
-
-            border: none;
-
-            background: linear-gradient(135deg, #2563eb, #3b82f6);
-
-            color: white;
-
-            padding: 16px;
-
-            border-radius: 20px;
-
-            font-size: 12px;
-            font-weight: 800;
-
-            letter-spacing: 3px;
-            text-transform: uppercase;
-
-            cursor: pointer;
-
-            transition: 0.25s ease;
-        }
-
-        .btn-primary:hover {
-
-            transform: translateY(-2px);
-
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.3);
-        }
-
-        /* Main App */
-
-        #app {
-            display: none;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        /* Sidebar */
-
-        #sidebar {
-
-            width: 290px;
-            min-width: 290px;
-
-            height: 100vh;
-
-            border-right: 1px solid var(--border);
-
-            position: relative;
-
-            z-index: 60;
-        }
-
-        .logo-box {
-
-            width: 60px;
-            height: 60px;
-
-            border-radius: 22px;
-
-            display: flex;
-            align-items: center;
-            justify-content: center;
-
-            background: linear-gradient(135deg,
-                    rgba(59, 130, 246, 0.18),
-                    rgba(59, 130, 246, 0.06));
-
-            border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-
-        .nav-item {
-
-            display: flex;
-            align-items: center;
-            gap: 14px;
-
-            padding: 15px 18px;
-
-            border-radius: 18px;
-
-            cursor: pointer;
-
-            color: var(--text-soft);
-
-            transition: 0.22s ease;
-
-            border: 1px solid transparent;
-
-            font-size: 13px;
-            font-weight: 700;
-        }
-
-        .nav-item:hover {
-
-            background: rgba(255, 255, 255, 0.03);
-
-            color: white;
-        }
-
-        .nav-active {
-
-            background:
-                linear-gradient(90deg,
-                    rgba(59, 130, 246, 0.16),
-                    rgba(59, 130, 246, 0.04));
-
-            color: white;
-
-            border: 1px solid rgba(59, 130, 246, 0.22);
-
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.08);
-        }
-
-        /* Main Content */
-
-        #main-content {
-            flex: 1;
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* Header */
-
-        #topbar {
-
-            height: 78px;
-
-            border-bottom: 1px solid var(--border);
-
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-
-            padding: 0 24px;
-
-            background: rgba(5, 7, 10, 0.75);
-
-            backdrop-filter: blur(14px);
-
-            position: relative;
-            z-index: 40;
-        }
-
-        /* Page */
-
-        .page {
-            display: none;
-            animation: fadeSlide 0.35s ease;
-        }
-
-        .page.active {
-            display: block;
-        }
-
-        @keyframes fadeSlide {
-
-            from {
-                opacity: 0;
-                transform: translateY(8px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0px);
-            }
-        }
-
-        /* Market Ticker */
-
-        .ticker {
-            height: 42px;
-            overflow: hidden;
-            border-bottom: 1px solid var(--border);
-            background: rgba(255, 255, 255, 0.015);
-        }
-
-        .ticker-track {
-
-            display: flex;
-            align-items: center;
-            gap: 60px;
-
-            width: max-content;
-
-            animation: tickerMove 30s linear infinite;
-
-            height: 100%;
-        }
-
-        .ticker-track:hover {
-            animation-play-state: paused;
-        }
-
-        @keyframes tickerMove {
-
-            0% {
-                transform: translateX(0%);
-            }
-
-            100% {
-                transform: translateX(-50%);
-            }
-        }
-
-        /* Mobile */
-
-        #mobile-overlay {
-
-            position: fixed;
-            inset: 0;
-
-            background: rgba(0, 0, 0, 0.5);
-
-            z-index: 40;
-
-            display: none;
-        }
-
-        #mobile-overlay.active {
-            display: block;
-        }
-
-        @media(max-width: 1024px) {
-
-            #sidebar {
-
-                position: fixed;
-                left: -100%;
-                top: 0;
-
-                transition: 0.3s ease;
-            }
-
-            #sidebar.open {
-                left: 0;
-            }
-
-            #topbar {
-                padding: 0 18px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AiSignalFx Pro v13 Institutional</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://s3.tradingview.com/tv.js"></script>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Plus Jakarta Sans',sans-serif;
+}
+
+body{
+background:#0b0e11;
+color:white;
+overflow:hidden;
+}
+
+:root{
+--bg:#0b0e11;
+--card:#161a1e;
+--border:#2b3139;
+--blue:#3b82f6;
+}
+
+.page{
+display:none;
+animation:fade .3s ease;
+}
+
+.page.active{
+display:block;
+}
+
+@keyframes fade{
+from{
+opacity:0;
+transform:translateY(10px);
+}
+to{
+opacity:1;
+transform:translateY(0);
+}
+}
+
+.glass{
+background:#161a1e;
+border:1px solid #2b3139;
+border-radius:22px;
+}
+
+.nav-item{
+display:flex;
+align-items:center;
+gap:12px;
+padding:15px;
+border-radius:16px;
+cursor:pointer;
+transition:.2s;
+font-size:14px;
+font-weight:700;
+color:#8b949e;
+}
+
+.nav-item:hover{
+background:#1e2329;
+color:white;
+}
+
+.nav-active{
+background:#1e2329;
+color:#3b82f6;
+border:1px solid rgba(59,130,246,.2);
+}
+
+.input-pro{
+width:100%;
+padding:16px;
+background:#1e2329;
+border:1px solid #2b3139;
+border-radius:18px;
+color:white;
+outline:none;
+}
+
+.input-pro:focus{
+border-color:#3b82f6;
+}
+
+.ticker{
+display:flex;
+gap:40px;
+white-space:nowrap;
+animation:ticker 25s linear infinite;
+}
+
+@keyframes ticker{
+0%{transform:translateX(0);}
+100%{transform:translateX(-50%);}
+}
+
+::-webkit-scrollbar{
+width:4px;
+}
+
+::-webkit-scrollbar-thumb{
+background:#2b3139;
+}
+</style>
 </head>
 
 <body>
 
-    <!-- LOGIN SCREEN -->
+<!-- LOGIN -->
+<div id="login-screen" class="fixed inset-0 flex items-center justify-center bg-[#0b0e11] z-50">
+<div class="w-full max-w-md p-8 rounded-[36px] border border-[#2b3139] bg-[#161a1e] shadow-2xl">
+
+<div class="text-center mb-10">
+<div class="w-20 h-20 rounded-3xl bg-blue-500/10 flex items-center justify-center mx-auto mb-5 border border-blue-500/20">
+<i class="fas fa-microchip text-3xl text-blue-500"></i>
+</div>
+
+<h1 class="text-3xl font-black tracking-tight text-blue-500 italic">
+AiSignalFx <span class="text-white">PRO</span>
+</h1>
+
+<p class="text-[10px] uppercase tracking-[4px] text-gray-500 mt-2 font-bold">
+Institutional Terminal
+</p>
+</div>
+
+<div class="space-y-5">
+<input type="text" id="username" class="input-pro" placeholder="Username">
+<input type="password" id="password" class="input-pro" placeholder="Password">
+
+<button onclick="unlockTerminal()" class="w-full bg-blue-600 hover:bg-blue-500 transition-all py-4 rounded-2xl font-black uppercase tracking-widest text-xs">
+Open Terminal
+</button>
+</div>
+
+</div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden h-screen flex">
+
+<!-- SIDEBAR -->
+<aside class="w-[280px] bg-[#161a1e] border-r border-[#2b3139] flex flex-col">
+
+<div class="p-6 border-b border-[#2b3139]">
+<div class="flex items-center gap-4">
+<div id="avatar" class="w-14 h-14 rounded-2xl bg-blue-600 flex items-center justify-center text-xl font-black">
+P
+</div>
+
+<div>
+<h2 id="user-name" class="font-black text-sm uppercase">Premium User</h2>
+<p class="text-[10px] uppercase tracking-widest text-green-500 font-bold">
+Terminal Online
+</p>
+</div>
+</div>
+</div>
+
+<nav class="flex-1 overflow-y-auto p-4 space-y-2">
+
+<p class="text-[10px] text-gray-500 uppercase tracking-[4px] font-black mb-3 ml-2">
+Main Terminal
+</p>
+
+<div onclick="switchPage('dashboard', this)" class="nav-item nav-active">
+<i class="fas fa-chart-line"></i>
+<span>Dashboard</span>
+</div>
+
+<div onclick="switchPage('analysis', this)" class="nav-item">
+<i class="fas fa-microchip text-blue-400"></i>
+<span>AI Analyst</span>
+</div>
+
+<div onclick="switchPage('autoscan', this)" class="nav-item">
+<i class="fas fa-robot text-yellow-400"></i>
+<span>AutoScan VIP</span>
+</div>
+
+<div onclick="switchPage('journal', this)" class="nav-item">
+<i class="fas fa-book-open text-green-400"></i>
+<span>Trading Journal</span>
+</div>
+
+<div onclick="switchPage('risk', this)" class="nav-item">
+<i class="fas fa-shield-halved text-red-400"></i>
+<span>Risk Calculator</span>
+</div>
+
+<div onclick="switchPage('smc', this)" class="nav-item">
+<i class="fas fa-graduation-cap text-amber-400"></i>
+<span>SMC Masterclass</span>
+</div>
+
+</nav>
+
+<div class="p-5 border-t border-[#2b3139]">
+<button onclick="location.reload()" class="w-full py-3 rounded-xl bg-red-500/10 text-red-500 font-bold uppercase text-xs">
+Disconnect
+</button>
+</div>
+
+</aside>
+
+<!-- CONTENT -->
+<div class="flex-1 flex flex-col overflow-hidden">
+
+<header class="h-16 border-b border-[#2b3139] bg-[#0b0e11] flex items-center justify-between px-6">
+
+<div>
+<h1 id="page-title" class="uppercase tracking-[4px] text-xs font-black text-blue-500">
+Institutional Dashboard
+</h1>
+</div>
+
+<div class="flex items-center gap-6">
+
+<div class="text-right">
+<div id="clock" class="font-black"></div>
+<div class="text-[9px] uppercase tracking-widest text-gray-500 font-bold">
+Global Market
+</div>
+</div>
+
+<div class="flex items-center gap-2 px-4 py-2 rounded-xl border border-[#2b3139] bg-[#161a1e]">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-[10px] uppercase tracking-widest font-black">
+Live Server
+</span>
+</div>
 
-    <div id="login-screen">
+</div>
+
+</header>
+
+<div class="h-10 border-b border-[#2b3139] bg-[#161a1e] flex items-center overflow-hidden">
+<div class="ticker">
+<div>XAUUSD <span class="text-green-400">2345.12</span></div>
+<div>BTCUSD <span class="text-red-400">67120</span></div>
+<div>EURUSD <span class="text-green-400">1.0854</span></div>
+<div>GBPUSD <span class="text-green-400">1.2643</span></div>
+<div>USDJPY <span class="text-red-400">156.23</span></div>
+<div>XAUUSD <span class="text-green-400">2345.12</span></div>
+<div>BTCUSD <span class="text-red-400">67120</span></div>
+</div>
+</div>
 
-        <div class="login-grid"></div>
+<main class="flex-1 overflow-y-auto p-6 bg-[#0b0e11]">
 
-        <div class="login-card glass shadow-blue">
+<!-- DASHBOARD -->
+<div id="dashboard" class="page active">
 
-            <div class="text-center mb-10">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
 
-                <div class="logo-box mx-auto mb-6">
-                    <i class="fas fa-microchip text-2xl text-blue-400"></i>
-                </div>
+<div class="glass p-6">
+<p class="text-gray-500 text-xs uppercase font-black tracking-widest">
+Winrate
+</p>
+<h2 class="text-3xl font-black text-green-400 mt-2">
+78%
+</h2>
+</div>
 
-                <h1 class="text-4xl font-extrabold tracking-tight italic">
-                    <span class="title-gradient">AiSignalFx</span>
-                    <span class="text-white">PRO X</span>
-                </h1>
+<div class="glass p-6">
+<p class="text-gray-500 text-xs uppercase font-black tracking-widest">
+Profit Today
+</p>
+<h2 class="text-3xl font-black text-blue-400 mt-2">
++$1,245
+</h2>
+</div>
 
-                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[5px] mt-4">
-                    Institutional Trading Terminal
-                </p>
+<div class="glass p-6">
+<p class="text-gray-500 text-xs uppercase font-black tracking-widest">
+Bias Market
+</p>
+<h2 class="text-3xl font-black text-yellow-400 mt-2">
+Bullish
+</h2>
+</div>
 
-            </div>
+</div>
 
-            <div class="space-y-6">
+<div class="glass overflow-hidden">
+<div id="tvchart" style="height:600px;"></div>
+</div>
 
-                <div>
+</div>
 
-                    <label
-                        class="text-[10px] uppercase tracking-[4px] font-extrabold text-slate-500 mb-3 block ml-2">
-                        Terminal ID
-                    </label>
+<!-- ANALYSIS -->
+<div id="analysis" class="page">
 
-                    <input type="text"
-                        id="username"
-                        class="input-pro"
-                        placeholder="ENTER USER ID">
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
-                </div>
+<div class="glass p-8">
 
-                <div>
+<h2 class="text-2xl font-black text-blue-500 mb-2">
+AI Visual Analyst
+</h2>
 
-                    <label
-                        class="text-[10px] uppercase tracking-[4px] font-extrabold text-slate-500 mb-3 block ml-2">
-                        Secure Password
-                    </label>
+<p class="text-xs uppercase tracking-widest text-gray-500 font-bold mb-8">
+Screenshot Detection Engine
+</p>
 
-                    <input type="password"
-                        id="password"
-                        class="input-pro"
-                        placeholder="••••••••••">
+<div class="border-2 border-dashed border-blue-500/30 rounded-3xl h-[350px] flex flex-col items-center justify-center text-center p-10">
 
-                </div>
+<i class="fas fa-cloud-upload-alt text-5xl text-blue-500 mb-5"></i>
 
-                <button onclick="unlockTerminal()" class="btn-primary">
-                    Open Institutional Access
-                    <i class="fas fa-arrow-right ml-2"></i>
-                </button>
+<h3 class="font-black text-xl">
+Upload Chart
+</h3>
 
-            </div>
+<p class="text-gray-500 text-xs uppercase tracking-widest mt-3">
+AI akan mendeteksi BOS, CHOCH dan Liquidity
+</p>
 
-            <div class="mt-10 pt-6 border-t border-white/5 flex items-center justify-center gap-4">
+<input type="file" id="file-input" class="hidden">
 
-                <span class="text-[9px] uppercase tracking-[3px] font-bold text-slate-600">
-                    Version X.1
-                </span>
+<button onclick="document.getElementById('file-input').click()"
+class="mt-8 px-8 py-4 rounded-2xl bg-blue-600 font-black uppercase text-xs tracking-widest">
+Upload Screenshot
+</button>
 
-                <span class="w-1 h-1 rounded-full bg-slate-700"></span>
+</div>
 
-                <span class="text-[9px] uppercase tracking-[3px] font-bold text-slate-600">
-                    AI Core Active
-                </span>
+</div>
 
-                <span class="w-1 h-1 rounded-full bg-slate-700"></span>
+<div class="glass flex flex-col">
 
-                <span class="text-[9px] uppercase tracking-[3px] font-bold text-slate-600">
-                    Firebase Ready
-                </span>
+<div class="p-5 border-b border-[#2b3139]">
+<h3 class="uppercase tracking-widest text-xs font-black text-blue-500">
+AI Detection Console
+</h3>
+</div>
 
-            </div>
+<div id="analysis-log" class="p-6 flex-1 overflow-y-auto text-sm space-y-3">
+<div class="text-gray-500 italic">
+Terminal standby...
+</div>
+</div>
 
-        </div>
+</div>
 
-    </div>
+</div>
 
-    <!-- MOBILE OVERLAY -->
+</div>
 
-    <div id="mobile-overlay"></div>
+<!-- AUTOSCAN -->
+<div id="autoscan" class="page">
 
-    <!-- MAIN APP -->
+<div class="glass p-8">
 
-    <div id="app" class="flex">
-    <!-- PAGE : AI AUTOSCAN -->
+<h2 class="text-2xl font-black text-yellow-400">
+AI AutoScan VIP
+</h2>
 
-                <section id="page-autoscan" class="page">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mt-8">
 
-                    <!-- Header -->
+<div class="p-5 rounded-2xl bg-black/20 border border-white/5">
+<p class="text-xs text-gray-500 uppercase font-black">XAUUSD</p>
+<h3 class="text-2xl font-black text-green-400 mt-2">BUY</h3>
+<p class="text-sm text-gray-400 mt-2">Liquidity sweep detected</p>
+</div>
 
-                    <div class="mb-8">
+<div class="p-5 rounded-2xl bg-black/20 border border-white/5">
+<p class="text-xs text-gray-500 uppercase font-black">EURUSD</p>
+<h3 class="text-2xl font-black text-red-400 mt-2">SELL</h3>
+<p class="text-sm text-gray-400 mt-2">Bearish BOS confirmed</p>
+</div>
 
-                        <p class="text-[11px] uppercase tracking-[4px] font-extrabold text-yellow-400 mb-3">
-                            AUTO SCAN ENGINE
-                        </p>
+<div class="p-5 rounded-2xl bg-black/20 border border-white/5">
+<p class="text-xs text-gray-500 uppercase font-black">BTCUSD</p>
+<h3 class="text-2xl font-black text-yellow-400 mt-2">WAIT</h3>
+<p class="text-sm text-gray-400 mt-2">No confirmation</p>
+</div>
 
-                        <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight">
-                            AI AutoScan
-                            <span class="title-gradient">
-                                Institutional Engine
-                            </span>
-                        </h1>
+</div>
 
-                        <p class="text-slate-500 text-sm mt-3 max-w-2xl leading-relaxed">
-                            Real-time market scanning untuk mendeteksi setup Smart Money Concept,
-                            liquidity sweep, BOS, CHoCH, dan institutional reaction otomatis.
-                        </p>
+</div>
 
-                    </div>
+</div>
 
-                    <!-- Grid -->
+<!-- JOURNAL -->
+<div id="journal" class="page">
 
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
+<div class="glass p-8">
 
-                        <!-- Left -->
+<h2 class="text-2xl font-black text-green-400">
+Trading Journal
+</h2>
 
-                        <div class="xl:col-span-2 space-y-6">
+<textarea class="w-full mt-6 h-[400px] bg-[#0b0e11] border border-[#2b3139] rounded-2xl p-5 outline-none resize-none"
+placeholder="Catat semua entry trading kamu di sini..."></textarea>
 
-                            <!-- Scanner -->
+</div>
 
-                            <div class="card p-6">
+</div>
 
-                                <div class="flex items-center justify-between mb-8">
+<!-- RISK -->
+<div id="risk" class="page">
 
-                                    <div>
+<div class="glass p-8 max-w-xl">
 
-                                        <p
-                                            class="text-[10px] uppercase tracking-[4px] text-yellow-400 font-extrabold">
-                                            LIVE SCANNER
-                                        </p>
+<h2 class="text-2xl font-black text-red-400 mb-8">
+Risk Calculator
+</h2>
 
-                                        <h2 class="text-2xl font-extrabold tracking-tight mt-2">
-                                            Institutional Market Detection
-                                        </h2>
+<div class="space-y-5">
 
-                                    </div>
+<input type="number" id="balance" class="input-pro" placeholder="Balance">
 
-                                    <button
-                                        class="h-[52px] px-6 rounded-2xl bg-yellow-500 hover:bg-yellow-400 transition text-black text-[11px] uppercase tracking-[4px] font-extrabold">
+<input type="number" id="riskPercent" class="input-pro" placeholder="Risk %">
 
-                                        <i class="fas fa-wave-square mr-2"></i>
+<button onclick="calculateRisk()" class="w-full py-4 rounded-2xl bg-red-500 font-black uppercase text-xs tracking-widest">
+Calculate
+</button>
 
-                                        Start Scanner
+<div id="risk-result" class="text-xl font-black text-center mt-6"></div>
 
-                                    </button>
+</div>
 
-                                </div>
+</div>
 
-                                <!-- Assets -->
+</div>
 
-                                <div class="space-y-4">
+<!-- SMC -->
+<div id="smc" class="page">
 
-                                    <!-- Asset -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-                                    <div
-                                        class="rounded-3xl border border-emerald-500/10 bg-emerald-500/5 p-5">
+<div class="glass p-6">
+<p class="text-xs uppercase tracking-widest text-amber-500 font-black">
+Module 01
+</p>
 
-                                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+<h2 class="text-2xl font-black mt-3">
+Break Of Structure
+</h2>
 
-                                            <div>
+<p class="text-gray-400 mt-3">
+Belajar cara identifikasi BOS valid institutional.
+</p>
+</div>
 
-                                                <div class="flex items-center gap-3">
+<div class="glass p-6">
+<p class="text-xs uppercase tracking-widest text-blue-500 font-black">
+Module 02
+</p>
 
-                                                    <h2 class="text-2xl font-extrabold">
-                                                        XAUUSD
-                                                    </h2>
+<h2 class="text-2xl font-black mt-3">
+Liquidity Sweep
+</h2>
 
-                                                    <span
-                                                        class="px-3 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 text-[10px] uppercase tracking-[3px] font-extrabold">
-                                                        BUY SETUP
-                                                    </span>
+<p class="text-gray-400 mt-3">
+Belajar smart money mengambil liquidity market.
+</p>
+</div>
 
-                                                </div>
+</div>
 
-                                                <p class="text-slate-400 text-sm mt-3">
-                                                    Bullish liquidity sweep + BOS confirmation
-                                                    pada timeframe M15.
-                                                </p>
+</div>
 
-                                            </div>
+</main>
 
-                                            <div class="flex items-center gap-3">
+</div>
 
-                                                <div
-                                                    class="rounded-2xl bg-black/20 px-5 py-4">
+</div>
 
-                                                    <p
-                                                        class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                                        Entry
-                                                    </p>
+<script>
 
-                                                    <h3 class="text-lg font-extrabold mt-2">
-                                                        2342.80
-                                                    </h3>
+const USERS = {
+"psbetung":{
+password:"admin123",
+name:"PSBETUNG",
+avatar:"P"
+},
 
-                                                </div>
+"trader":{
+password:"pro123",
+name:"PREMIUM USER",
+avatar:"V"
+}
+};
 
-                                                <div
-                                                    class="rounded-2xl bg-black/20 px-5 py-4">
+function unlockTerminal(){
 
-                                                    <p
-                                                        class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                                        TP
-                                                    </p>
+const username = document.getElementById('username').value.toLowerCase();
+const password = document.getElementById('password').value;
 
-                                                    <h3 class="text-lg font-extrabold mt-2 text-emerald-400">
-                                                        2351.40
-                                                    </h3>
+if(USERS[username] && USERS[username].password === password){
 
-                                                </div>
+document.getElementById('login-screen').style.display='none';
+document.getElementById('app').classList.remove('hidden');
 
-                                            </div>
+document.getElementById('user-name').innerText = USERS[username].name;
+document.getElementById('avatar').innerText = USERS[username].avatar;
 
-                                        </div>
+setTimeout(initTV,300);
 
-                                    </div>
+}else{
+alert("ACCESS DENIED");
+}
 
-                                    <!-- BTC -->
+}
 
-                                    <div
-                                        class="rounded-3xl border border-red-500/10 bg-red-500/5 p-5">
+function switchPage(id, el){
 
-                                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+document.querySelectorAll('.page').forEach(p=>{
+p.classList.remove('active');
+});
 
-                                            <div>
+document.getElementById(id).classList.add('active');
 
-                                                <div class="flex items-center gap-3">
+document.querySelectorAll('.nav-item').forEach(n=>{
+n.classList.remove('nav-active');
+});
 
-                                                    <h2 class="text-2xl font-extrabold">
-                                                        BTCUSD
-                                                    </h2>
+el.classList.add('nav-active');
 
-                                                    <span
-                                                        class="px-3 py-2 rounded-xl bg-red-500/10 text-red-400 text-[10px] uppercase tracking-[3px] font-extrabold">
-                                                        SELL SETUP
-                                                    </span>
+const titles = {
+dashboard:"Institutional Dashboard",
+analysis:"AI Visual Analyst",
+autoscan:"AI AutoScan VIP",
+journal:"Trading Journal",
+risk:"Risk Calculator",
+smc:"SMC Masterclass"
+};
 
-                                                </div>
+document.getElementById('page-title').innerText = titles[id];
 
-                                                <p class="text-slate-400 text-sm mt-3">
-                                                    Bearish CHoCH dengan reaction pada premium zone.
-                                                </p>
+if(id === 'dashboard'){
+setTimeout(initTV,100);
+}
 
-                                            </div>
+}
 
-                                            <div class="flex items-center gap-3">
+function initTV(){
 
-                                                <div
-                                                    class="rounded-2xl bg-black/20 px-5 py-4">
+if(typeof TradingView === 'undefined'){
+return;
+}
 
-                                                    <p
-                                                        class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                                        Entry
-                                                    </p>
+document.getElementById('tvchart').innerHTML='';
 
-                                                    <h3 class="text-lg font-extrabold mt-2">
-                                                        67100
-                                                    </h3>
+new TradingView.widget({
+autosize:true,
+symbol:"OANDA:XAUUSD",
+interval:"15",
+timezone:"Etc/UTC",
+theme:"dark",
+style:"1",
+locale:"en",
+container_id:"tvchart",
+backgroundColor:"#0b0e11",
+gridColor:"rgba(255,255,255,0.05)"
+});
 
-                                                </div>
+}
 
-                                                <div
-                                                    class="rounded-2xl bg-black/20 px-5 py-4">
+function updateClock(){
+const now = new Date();
+document.getElementById('clock').innerText =
+now.toLocaleTimeString('en-GB',{hour12:false});
+}
 
-                                                    <p
-                                                        class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                                        TP
-                                                    </p>
+setInterval(updateClock,1000);
+updateClock();
 
-                                                    <h3 class="text-lg font-extrabold mt-2 text-red-400">
-                                                        66350
-                                                    </h3>
+function calculateRisk(){
 
-                                                </div>
+const balance = parseFloat(document.getElementById('balance').value);
+const risk = parseFloat(document.getElementById('riskPercent').value);
 
-                                            </div>
+if(!balance || !risk){
+return;
+}
 
-                                        </div>
+const result = (balance * risk) / 100;
 
-                                    </div>
+document.getElementById('risk-result').innerText =
+"Max Risk: $" + result.toFixed(2);
 
-                                    <!-- EURUSD -->
+}
 
-                                    <div
-                                        class="rounded-3xl border border-amber-500/10 bg-amber-500/5 p-5">
+document.getElementById('file-input').addEventListener('change',function(e){
 
-                                        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-5">
+if(e.target.files.length > 0){
 
-                                            <div>
+const log = document.getElementById('analysis-log');
 
-                                                <div class="flex items-center gap-3">
+const steps = [
+"Loading screenshot...",
+"Detecting market structure...",
+"Scanning BOS...",
+"Detecting CHOCH...",
+"Scanning liquidity...",
+"Bullish structure detected."
+];
 
-                                                    <h2 class="text-2xl font-extrabold">
-                                                        EURUSD
-                                                    </h2>
+log.innerHTML = "";
 
-                                                    <span
-                                                        class="px-3 py-2 rounded-xl bg-amber-500/10 text-amber-400 text-[10px] uppercase tracking-[3px] font-extrabold">
-                                                        WAITING
-                                                    </span>
+let i = 0;
 
-                                                </div>
+const interval = setInterval(()=>{
 
-                                                <p class="text-slate-400 text-sm mt-3">
-                                                    Market masih konsolidasi di area liquidity.
-                                                </p>
+if(i < steps.length){
 
-                                            </div>
+const div = document.createElement('div');
 
-                                            <div class="w-[180px]">
+div.className =
+"p-4 rounded-xl bg-black/20 border border-white/5";
 
-                                                <div
-                                                    class="w-full h-3 rounded-full bg-black/20 overflow-hidden">
+div.innerText = steps[i];
 
-                                                    <div
-                                                        class="w-[64%] h-full rounded-full bg-amber-400">
-                                                    </div>
+log.appendChild(div);
 
-                                                </div>
+log.scrollTop = log.scrollHeight;
 
-                                                <div class="flex justify-between mt-2">
+i++;
 
-                                                    <span
-                                                        class="text-[10px] uppercase tracking-[2px] text-slate-500 font-bold">
-                                                        Setup Progress
-                                                    </span>
+}else{
+clearInterval(interval);
+}
 
-                                                    <span
-                                                        class="text-[10px] uppercase tracking-[2px] text-amber-400 font-extrabold">
-                                                        64%
-                                                    </span>
+},1000);
 
-                                                </div>
+}
 
-                                            </div>
+});
 
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Right -->
-
-                        <div class="space-y-6">
-
-                            <!-- Scanner Status -->
-
-                            <div class="card p-6">
-
-                                <div class="flex items-center justify-between mb-6">
-
-                                    <div>
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[4px] text-yellow-400 font-extrabold">
-                                            ENGINE STATUS
-                                        </p>
-
-                                        <h2 class="text-xl font-extrabold tracking-tight mt-2">
-                                            Scanner Activity
-                                        </h2>
-
-                                    </div>
-
-                                    <div
-                                        class="w-14 h-14 rounded-2xl bg-yellow-500/10 border border-yellow-500/10 flex items-center justify-center">
-
-                                        <i class="fas fa-robot text-yellow-400 text-xl"></i>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="space-y-5">
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                                Market Scan
-                                            </span>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-emerald-400 font-extrabold">
-                                                ACTIVE
-                                            </span>
-
-                                        </div>
-
-                                        <div
-                                            class="w-full h-2 rounded-full bg-black/20 overflow-hidden mt-4">
-
-                                            <div
-                                                class="w-[94%] h-full bg-emerald-400 rounded-full">
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.02] p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                                Liquidity Mapping
-                                            </span>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-cyan-400 font-extrabold">
-                                                RUNNING
-                                            </span>
-
-                                        </div>
-
-                                        <div
-                                            class="w-full h-2 rounded-full bg-black/20 overflow-hidden mt-4">
-
-                                            <div
-                                                class="w-[82%] h-full bg-cyan-400 rounded-full">
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <!-- Institutional Activity -->
-
-                            <div class="card p-6">
-
-                                <div class="flex items-center justify-between mb-6">
-
-                                    <div>
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[4px] text-violet-400 font-extrabold">
-                                            INSTITUTIONAL FLOW
-                                        </p>
-
-                                        <h2 class="text-xl font-extrabold tracking-tight mt-2">
-                                            Smart Money Activity
-                                        </h2>
-
-                                    </div>
-
-                                    <div
-                                        class="w-14 h-14 rounded-2xl bg-violet-500/10 border border-violet-500/10 flex items-center justify-center">
-
-                                        <i class="fas fa-building-columns text-violet-400 text-xl"></i>
-
-                                    </div>
-
-                                </div>
-
-                                <div class="space-y-4">
-
-                                    <!-- Item -->
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <div>
-
-                                                <h3 class="font-extrabold">
-                                                    Liquidity Sweep
-                                                </h3>
-
-                                                <p class="text-xs text-slate-500 mt-2">
-                                                    Equal highs berhasil diambil sebelum bullish expansion.
-                                                </p>
-
-                                            </div>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-emerald-400 font-extrabold">
-                                                VALID
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- Item -->
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <div>
-
-                                                <h3 class="font-extrabold">
-                                                    Premium Zone
-                                                </h3>
-
-                                                <p class="text-xs text-slate-500 mt-2">
-                                                    BTCUSD berada pada premium pricing area.
-                                                </p>
-
-                                            </div>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-red-400 font-extrabold">
-                                                SELL BIAS
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- Item -->
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.02] p-4">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <div>
-
-                                                <h3 class="font-extrabold">
-                                                    FVG Reaction
-                                                </h3>
-
-                                                <p class="text-xs text-slate-500 mt-2">
-                                                    Price reaction terdeteksi pada imbalance M5.
-                                                </p>
-
-                                            </div>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-cyan-400 font-extrabold">
-                                                ACTIVE
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-                <!-- PAGE : SMC -->
-
-                <section id="page-smc" class="page">
-
-                    <!-- Header -->
-
-                    <div class="mb-8">
-
-                        <p class="text-[11px] uppercase tracking-[4px] font-extrabold text-amber-400 mb-3">
-                            SMC PLAYBOOK
-                        </p>
-
-                        <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight">
-                            Smart Money
-                            <span class="title-gradient">
-                                Concept Masterclass
-                            </span>
-                        </h1>
-
-                        <p class="text-slate-500 text-sm mt-3 max-w-2xl leading-relaxed">
-                            Institutional trading framework untuk memahami liquidity,
-                            market structure, BOS, CHoCH, Order Block,
-                            dan delivery algorithm market.
-                        </p>
-
-                    </div>
-
-                    <!-- Modules -->
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-
-                        <!-- Module -->
-
-                        <div class="card p-6">
-
-                            <div
-                                class="w-16 h-16 rounded-3xl bg-blue-500/10 border border-blue-500/10 flex items-center justify-center mb-6">
-
-                                <i class="fas fa-chart-line text-blue-400 text-2xl"></i>
-
-                            </div>
-
-                            <p
-                                class="text-[10px] uppercase tracking-[4px] text-blue-400 font-extrabold">
-                                MODULE 01
-                            </p>
-
-                            <h2 class="text-2xl font-extrabold tracking-tight mt-3">
-                                Market Structure
-                            </h2>
-
-                            <p class="text-sm text-slate-500 leading-relaxed mt-4">
-                                Pelajari HH, HL, LH, LL,
-                                Break of Structure, dan market trend delivery.
-                            </p>
-
-                            <button
-                                class="mt-6 h-[48px] px-6 rounded-2xl bg-blue-500 hover:bg-blue-400 transition text-[11px] uppercase tracking-[4px] font-extrabold">
-
-                                Start Learning
-
-                            </button>
-
-                        </div>
-
-                        <!-- Module -->
-
-                        <div class="card p-6">
-
-                            <div
-                                class="w-16 h-16 rounded-3xl bg-red-500/10 border border-red-500/10 flex items-center justify-center mb-6">
-
-                                <i class="fas fa-arrows-turn-right text-red-400 text-2xl"></i>
-
-                            </div>
-
-                            <p
-                                class="text-[10px] uppercase tracking-[4px] text-red-400 font-extrabold">
-                                MODULE 02
-                            </p>
-
-                            <h2 class="text-2xl font-extrabold tracking-tight mt-3">
-                                CHoCH & Reversal
-                            </h2>
-
-                            <p class="text-sm text-slate-500 leading-relaxed mt-4">
-                                Memahami perubahan karakter market dan reversal institutional.
-                            </p>
-
-                            <button
-                                class="mt-6 h-[48px] px-6 rounded-2xl bg-red-500 hover:bg-red-400 transition text-[11px] uppercase tracking-[4px] font-extrabold">
-
-                                Start Learning
-
-                            </button>
-
-                        </div>
-
-                        <!-- Module -->
-
-                        <div class="card p-6">
-
-                            <div
-                                class="w-16 h-16 rounded-3xl bg-emerald-500/10 border border-emerald-500/10 flex items-center justify-center mb-6">
-
-                                <i class="fas fa-cubes text-emerald-400 text-2xl"></i>
-
-                            </div>
-
-                            <p
-                                class="text-[10px] uppercase tracking-[4px] text-emerald-400 font-extrabold">
-                                MODULE 03
-                            </p>
-
-                            <h2 class="text-2xl font-extrabold tracking-tight mt-3">
-                                Order Block
-                            </h2>
-
-                            <p class="text-sm text-slate-500 leading-relaxed mt-4">
-                                Menemukan zona institutional supply & demand berkualitas tinggi.
-                            </p>
-
-                            <button
-                                class="mt-6 h-[48px] px-6 rounded-2xl bg-emerald-500 hover:bg-emerald-400 transition text-[11px] uppercase tracking-[4px] font-extrabold">
-
-                                Start Learning
-
-                            </button>
-
-                        </div>
-
-                        <!-- Module -->
-
-                        <div class="card p-6">
-
-                            <div
-                                class="w-16 h-16 rounded-3xl bg-violet-500/10 border border-violet-500/10 flex items-center justify-center mb-6">
-
-                                <i class="fas fa-wave-square text-violet-400 text-2xl"></i>
-
-                            </div>
-
-                            <p
-                                class="text-[10px] uppercase tracking-[4px] text-violet-400 font-extrabold">
-                                MODULE 04
-                            </p>
-
-                            <h2 class="text-2xl font-extrabold tracking-tight mt-3">
-                                Fair Value Gap
-                            </h2>
-
-                            <p class="text-sm text-slate-500 leading-relaxed mt-4">
-                                Memahami imbalance market dan delivery inefficiency.
-                            </p>
-
-                            <button
-                                class="mt-6 h-[48px] px-6 rounded-2xl bg-violet-500 hover:bg-violet-400 transition text-[11px] uppercase tracking-[4px] font-extrabold">
-
-                                Start Learning
-
-                            </button>
-
-                        </div>
-                        <!-- Module -->
-
-                        <div class="card p-6">
-
-                            <div
-                                class="w-16 h-16 rounded-3xl bg-cyan-500/10 border border-cyan-500/10 flex items-center justify-center mb-6">
-
-                                <i class="fas fa-water text-cyan-400 text-2xl"></i>
-
-                            </div>
-
-                            <p
-                                class="text-[10px] uppercase tracking-[4px] text-cyan-400 font-extrabold">
-                                MODULE 05
-                            </p>
-
-                            <h2 class="text-2xl font-extrabold tracking-tight mt-3">
-                                Liquidity Concept
-                            </h2>
-
-                            <p class="text-sm text-slate-500 leading-relaxed mt-4">
-                                Pelajari equal highs, equal lows,
-                                inducement, dan liquidity sweep institutional.
-                            </p>
-
-                            <button
-                                class="mt-6 h-[48px] px-6 rounded-2xl bg-cyan-500 hover:bg-cyan-400 transition text-[11px] uppercase tracking-[4px] font-extrabold">
-
-                                Start Learning
-
-                            </button>
-
-                        </div>
-
-                        <!-- Module -->
-
-                        <div class="card p-6">
-
-                            <div
-                                class="w-16 h-16 rounded-3xl bg-yellow-500/10 border border-yellow-500/10 flex items-center justify-center mb-6">
-
-                                <i class="fas fa-brain text-yellow-400 text-2xl"></i>
-
-                            </div>
-
-                            <p
-                                class="text-[10px] uppercase tracking-[4px] text-yellow-400 font-extrabold">
-                                MODULE 06
-                            </p>
-
-                            <h2 class="text-2xl font-extrabold tracking-tight mt-3">
-                                Institutional Psychology
-                            </h2>
-
-                            <p class="text-sm text-slate-500 leading-relaxed mt-4">
-                                Bangun mindset institutional trader,
-                                risk discipline, dan execution framework.
-                            </p>
-
-                            <button
-                                class="mt-6 h-[48px] px-6 rounded-2xl bg-yellow-500 hover:bg-yellow-400 transition text-[11px] uppercase tracking-[4px] font-extrabold">
-
-                                Start Learning
-
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-                <!-- PAGE : JOURNAL -->
-
-                <section id="page-journal" class="page">
-
-                    <!-- Header -->
-
-                    <div class="mb-8">
-
-                        <p class="text-[11px] uppercase tracking-[4px] font-extrabold text-emerald-400 mb-3">
-                            TRADING JOURNAL
-                        </p>
-
-                        <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight">
-                            Professional
-                            <span class="title-gradient">
-                                Trading Journal
-                            </span>
-                        </h1>
-
-                        <p class="text-slate-500 text-sm mt-3 max-w-2xl leading-relaxed">
-                            Catat setiap entry, psychology,
-                            dan execution untuk meningkatkan consistency trading.
-                        </p>
-
-                    </div>
-
-                    <!-- Journal Grid -->
-
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-                        <!-- Form -->
-
-                        <div class="xl:col-span-2">
-
-                            <div class="card p-6">
-
-                                <div class="flex items-center justify-between mb-8">
-
-                                    <div>
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[4px] text-emerald-400 font-extrabold">
-                                            JOURNAL ENTRY
-                                        </p>
-
-                                        <h2 class="text-2xl font-extrabold tracking-tight mt-2">
-                                            Trading Execution Log
-                                        </h2>
-
-                                    </div>
-
-                                    <div
-                                        class="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/10 flex items-center justify-center">
-
-                                        <i class="fas fa-book-open text-emerald-400 text-xl"></i>
-
-                                    </div>
-
-                                </div>
-
-                                <!-- Form -->
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-
-                                    <div>
-
-                                        <label
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold block mb-3">
-
-                                            Trading Pair
-
-                                        </label>
-
-                                        <input type="text"
-                                            placeholder="XAUUSD"
-                                            class="w-full h-[56px] rounded-2xl border border-white/5 bg-white/[0.03] px-5 outline-none focus:border-emerald-400 text-sm">
-
-                                    </div>
-
-                                    <div>
-
-                                        <label
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold block mb-3">
-
-                                            Position
-
-                                        </label>
-
-                                        <select
-                                            class="w-full h-[56px] rounded-2xl border border-white/5 bg-white/[0.03] px-5 outline-none focus:border-emerald-400 text-sm">
-
-                                            <option>BUY</option>
-                                            <option>SELL</option>
-
-                                        </select>
-
-                                    </div>
-
-                                    <div>
-
-                                        <label
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold block mb-3">
-
-                                            Entry Price
-
-                                        </label>
-
-                                        <input type="number"
-                                            placeholder="2340.00"
-                                            class="w-full h-[56px] rounded-2xl border border-white/5 bg-white/[0.03] px-5 outline-none focus:border-emerald-400 text-sm">
-
-                                    </div>
-
-                                    <div>
-
-                                        <label
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold block mb-3">
-
-                                            Result
-
-                                        </label>
-
-                                        <select
-                                            class="w-full h-[56px] rounded-2xl border border-white/5 bg-white/[0.03] px-5 outline-none focus:border-emerald-400 text-sm">
-
-                                            <option>WIN</option>
-                                            <option>LOSS</option>
-                                            <option>BE</option>
-
-                                        </select>
-
-                                    </div>
-
-                                    <div class="md:col-span-2">
-
-                                        <label
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold block mb-3">
-
-                                            Trading Notes
-
-                                        </label>
-
-                                        <textarea
-                                            placeholder="Describe your setup, psychology, and execution..."
-                                            class="w-full h-[180px] rounded-2xl border border-white/5 bg-white/[0.03] px-5 py-5 outline-none focus:border-emerald-400 text-sm resize-none"></textarea>
-
-                                    </div>
-
-                                </div>
-
-                                <button
-                                    class="mt-8 h-[56px] px-8 rounded-2xl bg-emerald-500 hover:bg-emerald-400 transition text-[11px] uppercase tracking-[4px] font-extrabold">
-
-                                    Save Journal Entry
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Stats -->
-
-                        <div class="space-y-6">
-
-                            <!-- Stats -->
-
-                            <div class="card p-6">
-
-                                <p
-                                    class="text-[10px] uppercase tracking-[4px] text-emerald-400 font-extrabold mb-6">
-                                    JOURNAL STATS
-                                </p>
-
-                                <div class="space-y-5">
-
-                                    <div
-                                        class="rounded-2xl bg-white/[0.03] border border-white/5 p-5">
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                            Total Trades
-                                        </p>
-
-                                        <h2 class="text-3xl font-extrabold mt-3">
-                                            148
-                                        </h2>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl bg-white/[0.03] border border-white/5 p-5">
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                            Win Ratio
-                                        </p>
-
-                                        <h2 class="text-3xl font-extrabold mt-3 text-emerald-400">
-                                            84%
-                                        </h2>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <!-- Psychology -->
-
-                            <div class="card p-6">
-
-                                <p
-                                    class="text-[10px] uppercase tracking-[4px] text-yellow-400 font-extrabold mb-6">
-                                    TRADING PSYCHOLOGY
-                                </p>
-
-                                <div class="space-y-4">
-
-                                    <div
-                                        class="rounded-2xl border border-yellow-500/10 bg-yellow-500/5 p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <h3 class="font-extrabold">
-                                                Emotional Control
-                                            </h3>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-yellow-400 font-extrabold">
-                                                STABLE
-                                            </span>
-
-                                        </div>
-
-                                        <p class="text-sm text-slate-500 mt-3">
-                                            Tetap disiplin terhadap setup dan hindari revenge trading.
-                                        </p>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl border border-cyan-500/10 bg-cyan-500/5 p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <h3 class="font-extrabold">
-                                                Risk Discipline
-                                            </h3>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-cyan-400 font-extrabold">
-                                                GOOD
-                                            </span>
-
-                                        </div>
-
-                                        <p class="text-sm text-slate-500 mt-3">
-                                            Risk per trade tetap berada pada batas maksimal 1%.
-                                        </p>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-                <!-- PAGE : RISK -->
-
-                <section id="page-risk" class="page">
-
-                    <!-- Header -->
-
-                    <div class="mb-8">
-
-                        <p class="text-[11px] uppercase tracking-[4px] font-extrabold text-red-400 mb-3">
-                            RISK MANAGEMENT
-                        </p>
-
-                        <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight">
-                            Institutional
-                            <span class="title-gradient">
-                                Risk Calculator
-                            </span>
-                        </h1>
-
-                        <p class="text-slate-500 text-sm mt-3 max-w-2xl leading-relaxed">
-                            Hitung position sizing,
-                            risk exposure, dan lot calculation
-                            secara profesional.
-                        </p>
-
-                    </div>
-
-                    <!-- Risk Grid -->
-
-                    <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-
-                        <!-- Calculator -->
-
-                        <div class="card p-6">
-
-                            <div class="flex items-center justify-between mb-8">
-
-                                <div>
-
-                                    <p
-                                        class="text-[10px] uppercase tracking-[4px] text-red-400 font-extrabold">
-                                        POSITION SIZE
-                                    </p>
-
-                                    <h2 class="text-2xl font-extrabold tracking-tight mt-2">
-                                        Smart Risk Calculator
-                                    </h2>
-
-                                </div>
-
-                                <div
-                                    class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/10 flex items-center justify-center">
-
-                                    <i class="fas fa-shield-halved text-red-400 text-xl"></i>
-
-                                </div>
-
-                            </div>
-
-                            <!-- Form -->
-
-                            <div class="space-y-5">
-
-                                <div>
-
-                                    <label
-                                        class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold block mb-3">
-
-                                        Account Balance
-
-                                    </label>
-
-                                    <input type="number"
-                                        id="balance"
-                                        placeholder="1000"
-                                        class="w-full h-[56px] rounded-2xl border border-white/5 bg-white/[0.03] px-5 outline-none focus:border-red-400 text-sm">
-
-                                </div>
-
-                                <div>
-
-                                    <label
-                                        class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold block mb-3">
-
-                                        Risk Percentage
-
-                                    </label>
-
-                                    <input type="number"
-                                        id="risk"
-                                        placeholder="1"
-                                        class="w-full h-[56px] rounded-2xl border border-white/5 bg-white/[0.03] px-5 outline-none focus:border-red-400 text-sm">
-
-                                </div>
-
-                                <div>
-
-                                    <label
-                                        class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold block mb-3">
-
-                                        Stop Loss (Pips)
-
-                                    </label>
-
-                                    <input type="number"
-                                        id="sl"
-                                        placeholder="20"
-                                        class="w-full h-[56px] rounded-2xl border border-white/5 bg-white/[0.03] px-5 outline-none focus:border-red-400 text-sm">
-
-                                </div>
-
-                                <button onclick="calculateRisk()"
-                                    class="w-full h-[56px] rounded-2xl bg-red-500 hover:bg-red-400 transition text-[11px] uppercase tracking-[4px] font-extrabold">
-
-                                    Calculate Position Size
-
-                                </button>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Result -->
-
-                        <div class="space-y-6">
-
-                            <!-- Result Card -->
-
-                            <div class="card p-6">
-
-                                <p
-                                    class="text-[10px] uppercase tracking-[4px] text-red-400 font-extrabold mb-6">
-                                    CALCULATION RESULT
-                                </p>
-
-                                <div class="space-y-5">
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.03] p-5">
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                            Risk Amount
-                                        </p>
-
-                                        <h2 id="risk-amount"
-                                            class="text-3xl font-extrabold mt-3">
-                                            $0
-                                        </h2>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.03] p-5">
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                            Suggested Lot Size
-                                        </p>
-
-                                        <h2 id="lot-size"
-                                            class="text-3xl font-extrabold mt-3 text-emerald-400">
-                                            0.00
-                                        </h2>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.03] p-5">
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-                                            Maximum Drawdown
-                                        </p>
-
-                                        <h2 class="text-3xl font-extrabold mt-3 text-red-400">
-                                            SAFE
-                                        </h2>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <!-- Tips -->
-
-                            <div class="card p-6">
-
-                                <p
-                                    class="text-[10px] uppercase tracking-[4px] text-cyan-400 font-extrabold mb-6">
-                                    RISK GUIDELINES
-                                </p>
-
-                                <div class="space-y-4 text-sm text-slate-400 leading-relaxed">
-
-                                    <p>
-                                        • Gunakan maksimal 1% risk per trade.
-                                    </p>
-
-                                    <p>
-                                        • Hindari over leverage dan revenge trading.
-                                    </p>
-
-                                    <p>
-                                        • Fokus pada consistency, bukan lot besar.
-                                    </p>
-
-                                    <p>
-                                        • Institutional trader selalu prioritaskan survival.
-                                    </p>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-                <!-- PAGE : ADMIN -->
-
-                <section id="page-admin" class="page">
-
-                    <!-- Header -->
-
-                    <div class="mb-8">
-
-                        <p class="text-[11px] uppercase tracking-[4px] font-extrabold text-red-500 mb-3">
-                            MASTER CONSOLE
-                        </p>
-
-                        <h1 class="text-3xl lg:text-4xl font-extrabold tracking-tight">
-                            Institutional
-                            <span class="title-gradient">
-                                Admin Control
-                            </span>
-                        </h1>
-
-                        <p class="text-slate-500 text-sm mt-3 max-w-2xl leading-relaxed">
-                            Master administration panel untuk monitoring user,
-                            AI engine, terminal access, dan institutional activity.
-                        </p>
-
-                    </div>
-
-                    <!-- Grid -->
-
-                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
-
-                        <!-- Left -->
-
-                        <div class="xl:col-span-2 space-y-6">
-
-                            <!-- Users -->
-
-                            <div class="card p-6">
-
-                                <div class="flex items-center justify-between mb-8">
-
-                                    <div>
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[4px] text-red-400 font-extrabold">
-                                            ACTIVE USERS
-                                        </p>
-
-                                        <h2 class="text-2xl font-extrabold tracking-tight mt-2">
-                                            Terminal Access Monitoring
-                                        </h2>
-
-                                    </div>
-
-                                    <div
-                                        class="w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/10 flex items-center justify-center">
-
-                                        <i class="fas fa-user-shield text-red-400 text-xl"></i>
-
-                                    </div>
-
-                                </div>
-
-                                <!-- User List -->
-
-                                <div class="space-y-4">
-
-                                    <!-- User -->
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.03] p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <div class="flex items-center gap-4">
-
-                                                <div
-                                                    class="w-14 h-14 rounded-2xl bg-blue-500 flex items-center justify-center font-extrabold text-lg">
-
-                                                    P
-
-                                                </div>
-
-                                                <div>
-
-                                                    <h3 class="font-extrabold">
-                                                        PSBETUNG
-                                                    </h3>
-
-                                                    <p class="text-xs text-slate-500 mt-1">
-                                                        ADMIN • MASTER ACCESS
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
-
-                                            <span
-                                                class="px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 text-[10px] uppercase tracking-[3px] font-extrabold">
-
-                                                ONLINE
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <!-- User -->
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.03] p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <div class="flex items-center gap-4">
-
-                                                <div
-                                                    class="w-14 h-14 rounded-2xl bg-violet-500 flex items-center justify-center font-extrabold text-lg">
-
-                                                    V
-
-                                                </div>
-
-                                                <div>
-
-                                                    <h3 class="font-extrabold">
-                                                        PREMIUM USER
-                                                    </h3>
-
-                                                    <p class="text-xs text-slate-500 mt-1">
-                                                        VIP TERMINAL ACCESS
-                                                    </p>
-
-                                                </div>
-
-                                            </div>
-
-                                            <span
-                                                class="px-4 py-2 rounded-xl bg-emerald-500/10 text-emerald-400 text-[10px] uppercase tracking-[3px] font-extrabold">
-
-                                                ACTIVE
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                            <!-- AI System -->
-
-                            <div class="card p-6">
-
-                                <div class="flex items-center justify-between mb-8">
-
-                                    <div>
-
-                                        <p
-                                            class="text-[10px] uppercase tracking-[4px] text-cyan-400 font-extrabold">
-                                            AI CORE STATUS
-                                        </p>
-
-                                        <h2 class="text-2xl font-extrabold tracking-tight mt-2">
-                                            Institutional Neural Engine
-                                        </h2>
-
-                                    </div>
-
-                                    <div
-                                        class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/10 flex items-center justify-center">
-
-                                        <i class="fas fa-microchip text-cyan-400 text-xl"></i>
-
-                                    </div>
-
-                                </div>
-
-                                <!-- Status -->
-
-                                <div class="space-y-5">
-
-                                    <div>
-
-                                        <div class="flex items-center justify-between mb-3">
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-
-                                                AI Processing
-
-                                            </span>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-cyan-400 font-extrabold">
-
-                                                97%
-
-                                            </span>
-
-                                        </div>
-
-                                        <div
-                                            class="w-full h-3 rounded-full bg-black/20 overflow-hidden">
-
-                                            <div
-                                                class="w-[97%] h-full rounded-full bg-cyan-400">
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div>
-
-                                        <div class="flex items-center justify-between mb-3">
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-
-                                                Neural Accuracy
-
-                                            </span>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-emerald-400 font-extrabold">
-
-                                                92%
-
-                                            </span>
-
-                                        </div>
-
-                                        <div
-                                            class="w-full h-3 rounded-full bg-black/20 overflow-hidden">
-
-                                            <div
-                                                class="w-[92%] h-full rounded-full bg-emerald-400">
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div>
-
-                                        <div class="flex items-center justify-between mb-3">
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-slate-500 font-bold">
-
-                                                Market Data Feed
-
-                                            </span>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-yellow-400 font-extrabold">
-
-                                                LIVE
-
-                                            </span>
-
-                                        </div>
-
-                                        <div
-                                            class="w-full h-3 rounded-full bg-black/20 overflow-hidden">
-
-                                            <div
-                                                class="w-[99%] h-full rounded-full bg-yellow-400">
-                                            </div>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                        <!-- Right -->
-
-                        <div class="space-y-6">
-
-                            <!-- Server -->
-
-                            <div class="card p-6">
-
-                                <p
-                                    class="text-[10px] uppercase tracking-[4px] text-red-400 font-extrabold mb-6">
-                                    SERVER STATUS
-                                </p>
-
-                                <div class="space-y-4">
-
-                                    <div
-                                        class="rounded-2xl border border-emerald-500/10 bg-emerald-500/5 p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <h3 class="font-extrabold">
-                                                Firebase Database
-                                            </h3>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-emerald-400 font-extrabold">
-
-                                                ONLINE
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl border border-cyan-500/10 bg-cyan-500/5 p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <h3 class="font-extrabold">
-                                                TradingView Feed
-                                            </h3>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-cyan-400 font-extrabold">
-
-                                                CONNECTED
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl border border-yellow-500/10 bg-yellow-500/5 p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <h3 class="font-extrabold">
-                                                AI Scanner
-                                            </h3>
-
-                                            <span
-                                                class="text-[10px] uppercase tracking-[3px] text-yellow-400 font-extrabold">
-
-                                                ACTIVE
-
-                                            </span>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <!-- Security -->
-
-                            <div class="card p-6">
-
-                                <p
-                                    class="text-[10px] uppercase tracking-[4px] text-violet-400 font-extrabold mb-6">
-                                    SECURITY SYSTEM
-                                </p>
-
-                                <div class="space-y-5">
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.03] p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <div>
-
-                                                <h3 class="font-extrabold">
-                                                    Encrypted Access
-                                                </h3>
-
-                                                <p class="text-xs text-slate-500 mt-2">
-                                                    Institutional authentication layer active.
-                                                </p>
-
-                                            </div>
-
-                                            <i class="fas fa-lock text-violet-400 text-xl"></i>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.03] p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <div>
-
-                                                <h3 class="font-extrabold">
-                                                    Secure Terminal
-                                                </h3>
-
-                                                <p class="text-xs text-slate-500 mt-2">
-                                                    Trading environment fully protected.
-                                                </p>
-
-                                            </div>
-
-                                            <i class="fas fa-shield-halved text-cyan-400 text-xl"></i>
-
-                                        </div>
-
-                                    </div>
-
-                                    <div
-                                        class="rounded-2xl border border-white/5 bg-white/[0.03] p-5">
-
-                                        <div class="flex items-center justify-between">
-
-                                            <div>
-
-                                                <h3 class="font-extrabold">
-                                                    Master Firewall
-                                                </h3>
-
-                                                <p class="text-xs text-slate-500 mt-2">
-                                                    Neural firewall monitoring traffic activity.
-                                                </p>
-
-                                            </div>
-
-                                            <i class="fas fa-user-secret text-red-400 text-xl"></i>
-
-                                        </div>
-
-                                    </div>
-
-                                </div>
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-                </section>
-
-            </main>
-
-        </div>
-
-    </div>
-
-    <!-- MOBILE OVERLAY -->
-
-    <div id="mobile-overlay"
-        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden lg:hidden">
-    </div>
-
-    <!-- JAVASCRIPT -->
-
-    <script>
-
-        /* =========================================
-           TERMINAL CLOCK
-        ========================================== */
-
-        function updateClock() {
-
-            const now = new Date();
-
-            const clock = document.getElementById('digital-clock');
-
-            if (clock) {
-
-                clock.innerText = now.toLocaleTimeString('en-GB', {
-                    hour12: false
-                });
-
-            }
-
-        }
-
-        setInterval(updateClock, 1000);
-
-        updateClock();
-
-        /* =========================================
-           MOBILE SIDEBAR
-        ========================================== */
-
-        function toggleMenu() {
-
-            const sidebar = document.getElementById('sidebar');
-
-            const overlay = document.getElementById('mobile-overlay');
-
-            sidebar.classList.toggle('open');
-
-            overlay.classList.toggle('hidden');
-
-        }
-
-        document.getElementById('mobile-overlay')
-            .addEventListener('click', () => {
-
-                document.getElementById('sidebar')
-                    .classList.remove('open');
-
-                document.getElementById('mobile-overlay')
-                    .classList.add('hidden');
-
-            });
-
-        /* =========================================
-           SWITCH PAGE
-        ========================================== */
-
-        function switchPage(pageId, element) {
-
-            // Remove active nav
-
-            document.querySelectorAll('.nav-item')
-                .forEach(item => item.classList.remove('nav-active'));
-
-            // Add active nav
-
-            element.classList.add('nav-active');
-
-            // Hide all pages
-
-            document.querySelectorAll('.page')
-                .forEach(page => page.classList.remove('active'));
-
-            // Show target page
-
-            const targetPage = document.getElementById(pageId);
-
-            if (targetPage) {
-
-                targetPage.classList.add('active');
-
-            }
-
-            // Header title
-
-            const titles = {
-
-                'page-dash': 'Institutional Dashboard',
-
-                'page-analysis': 'AI Visual Analyst',
-
-                'page-autoscan': 'AI AutoScan VIP',
-
-                'page-smc': 'SMC Masterclass',
-
-                'page-journal': 'Professional Trading Journal',
-
-                'page-risk': 'Institutional Risk Calculator',
-
-                'page-admin': 'Master Admin Console'
-
-            };
-
-            document.getElementById('page-title').innerText =
-                titles[pageId] || 'Terminal';
-
-            // Close mobile sidebar
-
-            if (window.innerWidth < 1024) {
-
-                document.getElementById('sidebar')
-                    .classList.remove('open');
-
-                document.getElementById('mobile-overlay')
-                    .classList.add('hidden');
-
-            }
-
-            // Re-init TradingView
-
-            if (pageId === 'page-dash') {
-
-                setTimeout(initTV, 100);
-
-            }
-
-        }
-
-        /* =========================================
-           LOGIN SYSTEM
-        ========================================== */
-
-        const MASTER_KEYS = {
-
-            "psbetung": {
-
-                pass: "admin123",
-
-                role: "ADMIN",
-
-                name: "PSBETUNG",
-
-                status: "MASTER",
-
-                avatar: "P"
-
-            },
-
-            "trader": {
-
-                pass: "pro123",
-
-                role: "VIP",
-
-                name: "PREMIUM USER",
-
-                status: "ACTIVE",
-
-                avatar: "V"
-
-            }
-
-        };
-
-        let userSession = null;
-
-        function unlockTerminal() {
-
-            const username =
-                document.getElementById('username')
-                .value.toLowerCase();
-
-            const password =
-                document.getElementById('password')
-                .value;
-
-            if (
-                MASTER_KEYS[username] &&
-                MASTER_KEYS[username].pass === password
-            ) {
-
-                userSession = MASTER_KEYS[username];
-
-                const login =
-                    document.getElementById('login-screen');
-
-                login.style.transition = '0.5s';
-
-                login.style.opacity = '0';
-
-                login.style.transform = 'scale(1.05)';
-
-                setTimeout(() => {
-
-                    login.style.display = 'none';
-
-                    document.getElementById('app-content')
-                        .style.display = 'flex';
-
-                    initApp();
-
-                }, 500);
-
-            } else {
-
-                alert("ACCESS DENIED : INVALID CREDENTIALS");
-
-            }
-
-        }
-
-        /* =========================================
-           INIT APP
-        ========================================== */
-
-        function initApp() {
-
-            if (!userSession) return;
-
-            document.getElementById('user-avatar')
-                .innerText = userSession.avatar;
-
-            document.getElementById('user-name')
-                .innerText = userSession.name;
-
-            document.getElementById('user-status-text')
-                .innerText = userSession.status + " ONLINE";
-
-            // Admin access
-
-            if (userSession.role === 'ADMIN') {
-
-                document.getElementById('admin-menu')
-                    .classList.remove('hidden');
-
-            }
-
-            // Load dashboard
-
-            switchPage(
-                'page-dash',
-                document.querySelector('.nav-item')
-            );
-
-            // Init TradingView
-
-            setTimeout(initTV, 200);
-
-        }
-        /* =========================================
-           TRADINGVIEW CHART
-        ========================================== */
-
-        function initTV() {
-
-            const container =
-                document.getElementById('tv-chart-box');
-
-            if (!container) return;
-
-            container.innerHTML = "";
-
-            new TradingView.widget({
-
-                autosize: true,
-
-                symbol: "OANDA:XAUUSD",
-
-                interval: "15",
-
-                timezone: "Etc/UTC",
-
-                theme: "dark",
-
-                style: "1",
-
-                locale: "en",
-
-                enable_publishing: false,
-
-                allow_symbol_change: true,
-
-                save_image: false,
-
-                backgroundColor: "rgba(15,23,42,1)",
-
-                gridColor: "rgba(255,255,255,0.03)",
-
-                hide_top_toolbar: false,
-
-                hide_legend: false,
-
-                withdateranges: true,
-
-                details: true,
-
-                studies: [
-
-                    "MASimple@tv-basicstudies"
-
-                ],
-
-                container_id: "tv-chart-box"
-
-            });
-
-        }
-
-        /* =========================================
-           AI VISUAL ANALYSIS
-        ========================================== */
-
-        const fileInput =
-            document.getElementById('file-input');
-
-        if (fileInput) {
-
-            fileInput.addEventListener('change', function (e) {
-
-                if (e.target.files.length > 0) {
-
-                    startVisualAnalysis(
-                        e.target.files[0].name
-                    );
-
-                }
-
-            });
-
-        }
-
-        function startVisualAnalysis(fileName) {
-
-            const log =
-                document.getElementById('analysis-log');
-
-            const loader =
-                document.getElementById('ai-loading');
-
-            loader.classList.remove('hidden');
-
-            log.innerHTML = `
-                <div class="text-cyan-400 font-extrabold uppercase tracking-[3px]">
-                    [AI ENGINE] PROCESSING FILE : ${fileName}
-                </div>
-            `;
-
-            const steps = [
-
-                "Initializing institutional scanner...",
-
-                "Scanning candle structure...",
-
-                "Detecting BOS & CHoCH...",
-
-                "Finding liquidity pools...",
-
-                "Analyzing Fair Value Gap...",
-
-                "Validating Order Block zones...",
-
-                "Detecting premium & discount array...",
-
-                "Building institutional narrative...",
-
-                "AI COMPLETE : BULLISH MARKET STRUCTURE CONFIRMED."
-
-            ];
-
-            let step = 0;
-
-            const interval = setInterval(() => {
-
-                if (step < steps.length) {
-
-                    const div =
-                        document.createElement('div');
-
-                    div.className =
-                        "rounded-2xl border border-white/5 bg-white/[0.03] p-4 text-sm animate-pulse";
-
-                    div.innerHTML = `
-                        <span class="text-cyan-400 font-black mr-2">
-                            >>>
-                        </span>
-                        ${steps[step]}
-                    `;
-
-                    log.appendChild(div);
-
-                    log.scrollTop = log.scrollHeight;
-
-                    step++;
-
-                } else {
-
-                    clearInterval(interval);
-
-                    loader.classList.add('hidden');
-
-                    const result =
-                        document.createElement('div');
-
-                    result.className =
-                        "rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-5 mt-4";
-
-                    result.innerHTML = `
-                        <h3 class="font-extrabold text-emerald-400 uppercase tracking-[3px] text-xs">
-                            FINAL MARKET BIAS
-                        </h3>
-
-                        <p class="text-2xl font-extrabold mt-3">
-                            BULLISH CONTINUATION
-                        </p>
-
-                        <p class="text-sm text-slate-400 mt-3 leading-relaxed">
-                            Institutional orderflow menunjukkan bullish continuation
-                            setelah liquidity sweep dan valid BOS pada timeframe M15.
-                        </p>
-                    `;
-
-                    log.appendChild(result);
-
-                    log.scrollTop = log.scrollHeight;
-
-                }
-
-            }, 1200);
-
-        }
-
-        /* =========================================
-           RISK CALCULATOR
-        ========================================== */
-
-        function calculateRisk() {
-
-            const balance =
-                parseFloat(document.getElementById('balance').value) || 0;
-
-            const risk =
-                parseFloat(document.getElementById('risk').value) || 0;
-
-            const sl =
-                parseFloat(document.getElementById('sl').value) || 1;
-
-            // Risk Amount
-
-            const riskAmount =
-                (balance * risk) / 100;
-
-            // Simple Lot Formula
-
-            const lot =
-                (riskAmount / sl / 10).toFixed(2);
-
-            document.getElementById('risk-amount')
-                .innerText = "$" + riskAmount.toFixed(2);
-
-            document.getElementById('lot-size')
-                .innerText = lot;
-
-        }
-
-        /* =========================================
-           DRAG & DROP ANALYSIS
-        ========================================== */
-
-        const dropZone =
-            document.getElementById('drop-zone');
-
-        if (dropZone) {
-
-            dropZone.addEventListener('dragover', (e) => {
-
-                e.preventDefault();
-
-                dropZone.classList.add(
-                    'border-cyan-400',
-                    'bg-cyan-500/5'
-                );
-
-            });
-
-            dropZone.addEventListener('dragleave', () => {
-
-                dropZone.classList.remove(
-                    'border-cyan-400',
-                    'bg-cyan-500/5'
-                );
-
-            });
-
-            dropZone.addEventListener('drop', (e) => {
-
-                e.preventDefault();
-
-                dropZone.classList.remove(
-                    'border-cyan-400',
-                    'bg-cyan-500/5'
-                );
-
-                const file = e.dataTransfer.files[0];
-
-                if (file) {
-
-                    startVisualAnalysis(file.name);
-
-                }
-
-            });
-
-        }
-
-        /* =========================================
-           TERMINAL READY
-        ========================================== */
-
-        console.log(
-            "%c AiSignalFx PRO v12.0 READY ",
-            "background:#06b6d4;color:#000;padding:8px 16px;border-radius:12px;font-weight:bold;"
-        );
-
-    </script>
+</script>
 
 </body>
-
 </html>
