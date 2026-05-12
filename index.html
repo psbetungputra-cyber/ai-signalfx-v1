@@ -136,25 +136,53 @@
 
 <script>
     // --- KONEKSI FIREBASE ---
+        // --- KONEKSI FIREBASE ---
     const firebaseConfig = { 
         databaseURL: "https://ai-signalfx-v1-default-rtdb.asia-southeast1.firebasedatabase.app/" 
     };
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    // FUNGSI UTAMA: MENDENGARKAN TERMUX
+    // 1. DATA USER & SANDI (Ganti sandi di sini)
+    const USERS = { 
+        "psbetung": { 
+            password: "123", // Masukkan sandi yang kamu mau di sini
+            name: "PSBETUNG", 
+            avatar: "P" 
+        }
+    };
+
+    // 2. FUNGSI LOGIN (Sudah diperbaiki logikanya)
+    function unlockTerminal() {
+        const u = document.getElementById('username').value.toLowerCase();
+        const p = document.getElementById('password').value;
+        
+        // Cek apakah user ada di database dan sandinya cocok
+        if(USERS[u] && USERS[u].password === p) {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app').classList.remove('hidden');
+            
+            // Pasang identitas user ke sidebar
+            document.getElementById('user-name').innerText = USERS[u].name;
+            document.getElementById('avatar').innerText = USERS[u].avatar;
+            
+            setTimeout(initTV, 300);
+        } else {
+            alert("SANDI ATAU USER SALAH BRO!");
+        }
+    }
+
+    // 3. MENDENGARKAN SINYAL DARI TERMUX
     database.ref('signals').on('child_added', (snapshot) => {
         const data = snapshot.val();
         if(!data) return;
 
-        // Tambah ke Log AI
         const log = document.getElementById('analysis-log');
         const entry = document.createElement('div');
         entry.className = "p-2 bg-blue-500/5 border-l-2 border-blue-500 text-blue-400 mb-2 animate-pulse";
         entry.innerHTML = `[${new Date().toLocaleTimeString()}] SIGNAL: ${data.pair} | ${data.type} @ ${data.price}`;
         log.prepend(entry);
 
-        // Tambah ke Dashboard AutoScan
         const container = document.getElementById('signal-container');
         if(container.innerHTML.includes('Scanning')) container.innerHTML = '';
         
@@ -174,7 +202,7 @@
         container.innerHTML = card + container.innerHTML;
     });
 
-    // HARGA TICKER BERGERAK (Real-time Simulation)
+    // 4. HARGA TICKER BERGERAK (Simulasi agar Web terlihat hidup)
     setInterval(() => {
         const gold = (2345 + (Math.random() * 2)).toFixed(2);
         const btc = (67120 + (Math.random() * 50)).toFixed(1);
@@ -182,24 +210,7 @@
         document.getElementById('price-btc').innerText = btc;
     }, 1000);
 
-    // ADMIN CONTROL
-    function sendControl(cmd) {
-        database.ref('bot_control').set({ command: cmd, timestamp: Date.now() });
-        alert("Bot Engine: " + cmd);
-    }
-
-    // UI LOGIC
-    const USERS = { "psbetung": "123" };
-    function unlockTerminal() {
-        const u = document.getElementById('username').value;
-        const p = document.getElementById('password').value;
-        if(USERS[u] === p) {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app').classList.remove('hidden');
-            setTimeout(initTV, 300);
-        } else alert("ACCESS DENIED");
-    }
-
+    // 5. NAVIGASI Halaman
     function switchPage(id, el) {
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
         document.getElementById(id).classList.add('active');
@@ -207,6 +218,20 @@
         el.classList.add('nav-active');
         if(window.innerWidth < 1024) toggleSidebar();
         if(id === 'dashboard') setTimeout(initTV, 100);
+    }
+
+    // 6. FUNGSI LAINNYA (TradingView & Jam)
+    function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+    function sendControl(cmd) {
+        database.ref('bot_control').set({ command: cmd, timestamp: Date.now() });
+        alert("Bot Engine: " + cmd);
+    }
+    function initTV() { 
+        document.getElementById('tvchart').innerHTML = '';
+        new TradingView.widget({ "autosize": true, "symbol": "OANDA:XAUUSD", "interval": "15", "theme": "dark", "style": "1", "container_id": "tvchart", "locale": "id" }); 
+    }
+    setInterval(() => { document.getElementById('clock').innerText = new Date().toLocaleTimeString('en-GB'); }, 1000);
+
     }
 
     function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
